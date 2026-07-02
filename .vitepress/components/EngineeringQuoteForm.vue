@@ -1,26 +1,26 @@
 <template>
   <div class="eq-wrap">
     <div class="eq-header">
-      <span class="eq-badge-ent">⟳ useEntangle</span>
-      <span class="eq-badge-dag">→ from/define</span>
-      <span class="eq-title">工程项目报价单 — DAG + 双向纠缠</span>
-      <span class="eq-desc">53 节点 · 42 条联动规则 · 2 对纠缠</span>
+      <span class="eq-badge-ent">useEntangle</span>
+      <span class="eq-badge-dag">from / define</span>
+      <span class="eq-title">{{ copy.title }}</span>
+      <span class="eq-desc">{{ copy.desc }}</span>
     </div>
 
     <v-app theme="dark" class="eq-vapp">
       <div class="eq-body">
         <MeshForm
           ref="meshFormRef"
-          :schema="schema"
+          :schema="formSchema"
           :rules="rules"
-          :uischema="uischema"
+          :uischema="formUiSchema"
           :renderers="customRenderers"
           @change="onFormChange"
           @submit="onSubmit"
         >
           <template #actions="{ submit }">
             <div class="eq-actions">
-              <v-btn color="primary" variant="tonal" @click="submit">导出报价单</v-btn>
+              <v-btn color="primary" variant="tonal" @click="submit">{{ copy.submit }}</v-btn>
             </div>
           </template>
         </MeshForm>
@@ -28,7 +28,7 @@
 
       <div v-if="submitted" class="eq-result">
         <div class="eq-result-hd">
-          <span class="eq-dot eq-dot--green" />✓ 报价单已生成
+          <span class="eq-dot eq-dot--green" />{{ copy.result }}
         </div>
         <pre class="eq-result-pre">{{ submittedStr }}</pre>
       </div>
@@ -42,6 +42,113 @@ import { MeshForm, from } from '@meshflow/form-vue'
 import type { MeshFormSchema, FromDescriptor, MeshFormInstance } from '@meshflow/form-vue'
 import { rankWith, and, uiTypeIs, schemaMatches } from '@jsonforms/core'
 import NumberInputRenderer from './NumberInputRenderer.vue'
+
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+const copyMap = {
+  zh: {
+    title: '工程项目报价单 · DAG + 双向纠缠',
+    desc: '53 节点 · 42 条联动规则 · 2 对纠缠',
+    submit: '导出报价单',
+    result: '报价单已生成',
+  },
+  en: {
+    title: 'Engineering Quote · DAG plus bidirectional entangle',
+    desc: '53 nodes · 42 DAG rules · 2 entangled pairs',
+    submit: 'Export quote',
+    result: 'Quote generated',
+  },
+} as const
+const copy = computed(() => (props.en ? copyMap.en : copyMap.zh))
+
+const enText = {
+  "工程项目报价单": "Engineering quote",
+  "项目基础信息": "Project overview",
+  "项目类型": "Project type",
+  "软件开发（PM 1200 / Dev 1500 / QA 800）": "Software delivery (PM 1200 / Dev 1500 / QA 800)",
+  "系统集成（PM 1000 / Dev 1200 / QA 700）": "Systems integration (PM 1000 / Dev 1200 / QA 700)",
+  "管理咨询（PM 2000 / Dev 1600 / QA 900）": "Consulting (PM 2000 / Dev 1600 / QA 900)",
+  "运维托管（PM 800  / Dev 1000 / QA 600）": "Managed operations (PM 800 / Dev 1000 / QA 600)",
+  "客户行业": "Client industry",
+  "金融（增值税 6%）": "Finance (VAT 6%)",
+  "制造（增值税 13%）": "Manufacturing (VAT 13%)",
+  "政府（增值税 9%）": "Government (VAT 9%)",
+  "零售（增值税 13%）": "Retail (VAT 13%)",
+  "医疗（增值税 9%）": "Healthcare (VAT 9%)",
+  "PM 日费率 (元)": "PM day rate (¥)",
+  "开发 日费率 (元)": "Developer day rate (¥)",
+  "QA 日费率 (元)": "QA day rate (¥)",
+  "管理费率 (%)": "Management fee (%)",
+  "风险储备率 (%)": "Risk buffer (%)",
+  "增值税率 (%)": "VAT rate (%)",
+  "WBS 工作分解": "WBS breakdown",
+  "需求分析·PM (天)": "Discovery · PM (days)",
+  "需求分析·开发 (天)": "Discovery · Dev (days)",
+  "需求分析·QA (天)": "Discovery · QA (days)",
+  "需求分析·小计人天": "Discovery · person-days",
+  "需求分析·阶段人力成本 (元)": "Discovery · labor cost (¥)",
+  "系统设计·PM (天)": "Design · PM (days)",
+  "系统设计·开发 (天)": "Design · Dev (days)",
+  "系统设计·QA (天)": "Design · QA (days)",
+  "系统设计·小计人天": "Design · person-days",
+  "系统设计·阶段人力成本 (元)": "Design · labor cost (¥)",
+  "开发实施·PM (天)": "Implementation · PM (days)",
+  "开发实施·开发 (天)": "Implementation · Dev (days)",
+  "开发实施·QA (天)": "Implementation · QA (days)",
+  "开发实施·小计人天": "Implementation · person-days",
+  "开发实施·阶段人力成本 (元)": "Implementation · labor cost (¥)",
+  "合计投入人天": "Total person-days",
+  "成本汇总": "Cost summary",
+  "总人力成本 (元)": "Total labor cost (¥)",
+  "管理费 (元)": "Management fee (¥)",
+  "硬件/软件采购 (元)": "Hardware / software procurement (¥)",
+  "差旅及其他 (元)": "Travel and other (¥)",
+  "风险储备金 (元)": "Risk buffer (¥)",
+  "项目总成本 (元)": "Total project cost (¥)",
+  "报价计算": "Pricing",
+  "目标利润率 (%) ⟳": "Target margin (%) ⟳",
+  "建议报价 (元)": "Suggested quote (¥)",
+  "最终报价 (元) ⟳": "Final quote (¥) ⟳",
+  "利润额 (元)": "Margin amount (¥)",
+  "增值税额 (元)": "VAT amount (¥)",
+  "含税总价 (元)": "Total incl. VAT (¥)",
+  "资源规划": "Resource plan",
+  "团队并行效率": "Team parallelism",
+  "0.7（新团队 / 跨部门协作）": "0.7 (new team / cross-functional)",
+  "0.8（常规团队）": "0.8 (standard team)",
+  "0.9（成熟老团队）": "0.9 (highly coordinated team)",
+  "项目工期 (天) ⟳": "Duration (days) ⟳",
+  "团队规模 (人) ⟳": "Team size ⟳",
+  "日均合同额 (元/天)": "Daily contract value (¥/day)",
+  "人天单价 (元/人天)": "Revenue per person-day (¥)",
+  "付款方案": "Payment plan",
+  "首付比例 (%)": "Upfront payment (%)",
+  "签约首付 (元)": "Deposit on signing (¥)",
+  "里程碑中期款 (元)": "Milestone payment (¥)",
+  "验收尾款 (元)": "Final acceptance payment (¥)",
+  "风险预警": "Risk alerts",
+  "⚠ 利润率偏低": "⚠ Margin too low",
+  "当前利润率低于 15%，项目盈利空间不足，建议检查成本结构或重新定价。": "The current margin is below 15%. Review the cost structure or re-price the project.",
+  "⚠ 团队规模不足": "⚠ Team too small",
+  "按当前工期，建议配置更多人力以保障交付质量。": "Given the current timeline, add more capacity to protect delivery quality.",
+  "⚠ 工期紧张": "⚠ Schedule too tight",
+  "人天总量较大而工期较短，人均日工作量超出正常水平，存在交付风险。": "The workload is high relative to the schedule, pushing daily load per person above a normal level and increasing delivery risk.",
+  "WBS · 阶段一：需求分析": "WBS · Phase 1: Discovery",
+  "WBS · 阶段二：系统设计": "WBS · Phase 2: Design",
+  "WBS · 阶段三：开发实施": "WBS · Phase 3: Implementation",
+  "报价计算  ·  ⟳ 利润率 ↔ 最终报价（双向纠缠）": "Pricing · ⟳ Margin ↔ final quote (bidirectional entangle)",
+  "资源规划  ·  ⟳ 工期 ↔ 团队规模（双向纠缠）": "Resource plan · ⟳ Duration ↔ team size (bidirectional entangle)"
+} as const
+
+function localizeDeep(value, dict) {
+  if (Array.isArray(value)) return value.map(item => localizeDeep(item, dict))
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, dict)]))
+  }
+  if (typeof value === 'string') return dict[value] ?? value
+  return value
+}
 
 const numberInputTester = rankWith(10, and(
   uiTypeIs('Control'),
@@ -529,6 +636,9 @@ const uischema = {
     ),
   ],
 }
+
+const formSchema = computed(() => (props.en ? localizeDeep(schema, enText) : schema))
+const formUiSchema = computed(() => (props.en ? localizeDeep(uischema, enText) : uischema))
 
 // ── 纠缠缓存（onFormChange 更新，entangle emit 读取）────────────────────────
 const totalCostCache    = ref(INIT_TOTAL_COST)

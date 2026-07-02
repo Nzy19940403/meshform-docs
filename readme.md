@@ -1,82 +1,117 @@
-# MeshForm Vue Docs
+<p align="center">
+  <img src="./public/logo.svg" width="112" alt="MeshForm Vue logo" />
+</p>
 
-MeshForm Vue is a dynamic form solution for Vue 3 teams who already like `JSON Schema`, but do not want complex field linkage to collapse into a pile of `watch`, ad-hoc state, and async edge cases.
+<h1 align="center">MeshForm Vue</h1>
 
-It keeps the `@jsonforms/vue` rendering model and adds a deterministic linkage engine powered by MeshFlow. In practice, that means you can keep your schema, UISchema, and custom renderers, while moving cross-field logic into explicit rules.
+<p align="center"><strong>A deterministic linkage layer for <code>@jsonforms/vue</code>.</strong></p>
+
+<p align="center">Use MeshForm Vue when your JSON Forms setup needs more than rendering: dependent fields, derived values, async propagation, and bidirectional constraints.</p>
+
+<p align="center">It keeps the JSON Forms stack you already know and moves complex state evolution into an explicit rule engine powered by MeshFlow.</p>
+
+## What It Can Do
+
+- refresh downstream options when upstream fields change
+- fill derived fields like price, premium, or total in a predictable order
+- keep async option loading and remote lookups from corrupting newer state
+- model cyclic or bidirectional constraints without turning form logic into `watch` spaghetti
+
+## Where It Sits
+
+The graph below is captured from the real architecture page in the docs.
+It shows where MeshForm Vue sits between JSON Forms and the MeshFlow engine.
+
+<p align="center">
+  <img src="./public/arch-flow-shot.png" alt="MeshForm Vue architecture graph" width="980" />
+</p>
+
+## What It Is
+
+MeshForm Vue is a drop-in enhancement layer for teams who already like the `JSON Schema` + `UISchema` model, but no longer want complex linkage logic to live in scattered `watch`, ad-hoc state, and timing-sensitive UI code.
 
 ## What Problem It Solves
 
-Simple forms are easy. The trouble starts when fields begin to affect each other:
+The real difficulty in large business forms is rarely rendering.
 
-- category changes, so product options must refresh
-- one field drives visibility, required state, and readonly state of three others
-- amount, rate, and total need real-time calculation
-- two fields affect each other and must converge safely
-- async option loading creates ordering and stale-state issues
+It starts when fields begin to pull on one another:
 
-MeshForm Vue is designed for these cases.
+- one selection changes the available options of another field
+- one value drives visibility, readonly state, and validation of multiple fields
+- async fetches race with newer user input
+- totals, rates, and derived values must update in a predictable order
+- bidirectional constraints need to converge instead of looping forever
 
-## Positioning
+JSON Forms already gives you a strong schema-driven rendering model.
+MeshForm Vue focuses on the layer that usually becomes messy afterward: state evolution.
 
-MeshForm Vue is not trying to replace JSON Forms from scratch.
+## What It Adds to JSON Forms
 
-It is a Vue 3 enhancement layer built on top of `@jsonforms/vue`:
+MeshForm Vue is not a replacement for JSON Forms.
+It is a deterministic linkage layer on top of `@jsonforms/vue`.
 
-- keep `JSON Schema`
-- keep `UISchema`
-- keep custom renderers
-- keep Vue 3
-- add deterministic form linkage with `:rules`
+| You keep | You add |
+| --- | --- |
+| `JSON Schema` | explicit dependencies with `from()` |
+| `UISchema` | engine-managed propagation through `:rules` |
+| custom renderers | deterministic execution order |
+| Vue 3 component usage | async-safe updates and convergence |
 
-If your team is already using `@jsonforms/vue`, migration cost is intentionally low.
+That keeps rendering where it already belongs, while moving state orchestration into a dedicated engine.
 
-## When It Fits Best
+## Install
 
-MeshForm Vue is especially suitable for:
+```bash
+npm install @meshflow/form-vue
+```
 
-- insurance underwriting and application forms
-- pricing and quote systems
-- procurement and order forms
-- financial planning and allocation forms
-- product configuration and eligibility forms
-- any back-office workflow with heavy field interaction
-
-If your form is mostly plain CRUD with little linkage, plain JSON Forms may already be enough.
-
-## Why Teams Care
-
-- Declarative linkage instead of scattered `watch`
-- Deterministic execution order for complex dependencies
-- Safe support for cyclic interaction via entangle-style convergence
-- Better testability because business logic is separated from the view
-- Better observability because dependencies can be inspected as a graph
-- Lower migration cost for teams already invested in JSON Forms
+Peer dependencies usually include `vue`, `vuetify`, `@jsonforms/core`, `@jsonforms/vue`, `@meshflow/core`, and `@meshflow/form`.
 
 ## Example
 
 ```ts
-const rules = {
+import { from } from '@meshflow/form-vue'
+import type { FromDescriptor } from '@meshflow/form-vue'
+
+const rules: Record<string, FromDescriptor> = {
   'product.name.options': from('product.category', getOptions),
   'product.unitPrice.value': from('product.name', getPrice),
   'billing.total.value': from(
     ['product.quantity', 'product.unitPrice'],
-    (qty, price) => qty * price
+    (qty, price) => qty * price,
   ),
 }
 ```
 
-The goal is simple: make field interaction readable, predictable, and maintainable.
+This is the core idea: declare dependencies once, then let the engine handle propagation, ordering, and stabilization.
 
-## Docs Structure
+## Where It Fits Best
+
+MeshForm Vue shines when a form is no longer just data entry, but a small stateful system:
+
+- underwriting and insurance application flows
+- pricing, quoting, and allocation workflows
+- procurement and order configuration
+- product eligibility and solution design
+- internal tools with dense cross-field derivation
+- teams already using JSON Forms and feeling the weight of custom linkage code
+
+If your form is mostly plain CRUD, plain JSON Forms may already be enough.
+
+## Why Teams Care
+
+- field interaction becomes readable instead of implicit
+- execution order becomes predictable instead of accidental
+- async behavior becomes manageable instead of fragile
+- business rules become testable without going through the UI
+- complex linkage stops leaking all over the component tree
+
+## Documentation
 
 - [Quick Start](./guide/getting-started.md)
-- [Why MeshForm Vue](./guide/why.md)
 - [Architecture](./guide/architecture.md)
-- [Schema](./guide/schema.md)
-- [Linkage API](./guide/linkage.md)
 - [MeshForm Component](./guide/mesh-form.md)
-- [Custom Renderer](./guide/custom-renderer.md)
-- [Full API](./guide/api.md)
+- [Why MeshForm Vue](./guide/why.md)
 
 ## Demo Scenarios
 
@@ -87,15 +122,15 @@ The goal is simple: make field interaction readable, predictable, and maintainab
 - [Pension Planning](./demos/pension.md)
 - [Engineering Quote](./demos/engineering-quote.md)
 
-## Core Stack
+## Stack
 
 - `Vue 3`
-- `@jsonforms/vue`
 - `@jsonforms/core`
+- `@jsonforms/vue`
 - `@meshflow/core`
 - `@meshflow/form`
 - `@meshflow/form-vue`
 
-## One-Sentence Summary
+## License
 
-MeshForm Vue gives JSON Forms a deterministic state engine, so complex Vue forms stay understandable as they grow.
+Published MeshFlow packages are currently licensed under `AGPL-3.0-or-later`.

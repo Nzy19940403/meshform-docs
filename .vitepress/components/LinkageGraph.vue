@@ -1,13 +1,13 @@
 <template>
   <div class="graph-outer">
     <div class="graph-header">
-      <span class="graph-title">字段联动依赖图</span>
+      <span class="graph-title">{{ copy.title }}</span>
       <div class="graph-legend">
-        <span class="legend-item"><span class="dot product"></span>产品信息</span>
-        <span class="legend-item"><span class="dot discount"></span>折扣设置</span>
-        <span class="legend-item"><span class="dot billing"></span>结算信息</span>
-        <span class="legend-item"><span class="edge-sample solid"></span>值联动</span>
-        <span class="legend-item"><span class="edge-sample dashed"></span>显隐控制</span>
+        <span class="legend-item"><span class="dot product"></span>{{ copy.product }}</span>
+        <span class="legend-item"><span class="dot discount"></span>{{ copy.discount }}</span>
+        <span class="legend-item"><span class="dot billing"></span>{{ copy.billing }}</span>
+        <span class="legend-item"><span class="edge-sample solid"></span>{{ copy.valueEdge }}</span>
+        <span class="legend-item"><span class="edge-sample dashed"></span>{{ copy.hiddenEdge }}</span>
       </div>
     </div>
     <div class="graph-wrapper">
@@ -26,207 +26,94 @@
           <div class="mesh-node" :class="[data.group, { computed: data.computed }]">
             <div class="node-group-label">{{ groupName(data.group) }}</div>
             <div class="node-name">{{ data.label }}</div>
-            <div v-if="data.computed" class="node-badge">自动计算</div>
+            <div v-if="data.computed" class="node-badge">{{ copy.computed }}</div>
           </div>
         </template>
       </VueFlow>
     </div>
-    <div class="graph-hint">可拖动节点 · 滚轮缩放</div>
+    <div class="graph-hint">{{ copy.hint }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { VueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
-function groupName(g: string) {
-  return g === 'product' ? '产品信息' : g === 'discount' ? '折扣设置' : '结算信息'
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+
+const copyMap = {
+  zh: {
+    title: '字段联动依赖图',
+    product: '产品信息',
+    discount: '折扣设置',
+    billing: '结算信息',
+    valueEdge: '值联动',
+    hiddenEdge: '显隐控制',
+    computed: '自动计算',
+    hint: '可拖动节点 · 滚轮缩放',
+    groups: {
+      product: '产品信息',
+      discount: '折扣设置',
+      billing: '结算信息',
+    },
+  },
+  en: {
+    title: 'Field Dependency Graph',
+    product: 'Product',
+    discount: 'Discount',
+    billing: 'Billing',
+    valueEdge: 'Value propagation',
+    hiddenEdge: 'Visibility control',
+    computed: 'Derived',
+    hint: 'Drag nodes · scroll to zoom',
+    groups: {
+      product: 'Product',
+      discount: 'Discount',
+      billing: 'Billing',
+    },
+  },
+} as const
+
+const copy = computed(() => props.en ? copyMap.en : copyMap.zh)
+
+function groupName(group: 'product' | 'discount' | 'billing') {
+  return copy.value.groups[group]
 }
 
-// ── Nodes ──────────────────────────────────────────────────────────────────────
 const nodes = [
-  // Product group
-  {
-    id: 'category',
-    type: 'field',
-    position: { x: 0, y: 40 },
-    data: { label: 'category', group: 'product', computed: false },
-  },
-  {
-    id: 'name',
-    type: 'field',
-    position: { x: 220, y: 40 },
-    data: { label: 'name', group: 'product', computed: false },
-  },
-  {
-    id: 'basePrice',
-    type: 'field',
-    position: { x: 440, y: 40 },
-    data: { label: 'basePrice', group: 'product', computed: true },
-  },
-  {
-    id: 'quantity',
-    type: 'field',
-    position: { x: 0, y: 160 },
-    data: { label: 'quantity', group: 'product', computed: false },
-  },
-  // Discount group
-  {
-    id: 'discountType',
-    type: 'field',
-    position: { x: 0, y: 300 },
-    data: { label: 'discount.type', group: 'discount', computed: false },
-  },
-  {
-    id: 'discountAmount',
-    type: 'field',
-    position: { x: 220, y: 300 },
-    data: { label: 'discount.amount', group: 'discount', computed: false },
-  },
-  // Billing computed
-  {
-    id: 'subtotal',
-    type: 'field',
-    position: { x: 650, y: 100 },
-    data: { label: 'subtotal', group: 'billing', computed: true },
-  },
-  {
-    id: 'total',
-    type: 'field',
-    position: { x: 870, y: 100 },
-    data: { label: 'total', group: 'billing', computed: true },
-  },
-  // Billing inputs
-  {
-    id: 'paymentMethod',
-    type: 'field',
-    position: { x: 0, y: 430 },
-    data: { label: 'paymentMethod', group: 'billing', computed: false },
-  },
-  {
-    id: 'installments',
-    type: 'field',
-    position: { x: 220, y: 430 },
-    data: { label: 'installments', group: 'billing', computed: false },
-  },
-  {
-    id: 'monthlyPayment',
-    type: 'field',
-    position: { x: 1090, y: 260 },
-    data: { label: 'monthlyPayment', group: 'billing', computed: true },
-  },
+  { id: 'category', type: 'field', position: { x: 0, y: 40 }, data: { label: 'category', group: 'product', computed: false } },
+  { id: 'name', type: 'field', position: { x: 220, y: 40 }, data: { label: 'name', group: 'product', computed: false } },
+  { id: 'basePrice', type: 'field', position: { x: 440, y: 40 }, data: { label: 'basePrice', group: 'product', computed: true } },
+  { id: 'quantity', type: 'field', position: { x: 0, y: 160 }, data: { label: 'quantity', group: 'product', computed: false } },
+  { id: 'discountType', type: 'field', position: { x: 0, y: 300 }, data: { label: 'discount.type', group: 'discount', computed: false } },
+  { id: 'discountAmount', type: 'field', position: { x: 220, y: 300 }, data: { label: 'discount.amount', group: 'discount', computed: false } },
+  { id: 'subtotal', type: 'field', position: { x: 650, y: 100 }, data: { label: 'subtotal', group: 'billing', computed: true } },
+  { id: 'total', type: 'field', position: { x: 870, y: 100 }, data: { label: 'total', group: 'billing', computed: true } },
+  { id: 'paymentMethod', type: 'field', position: { x: 0, y: 430 }, data: { label: 'paymentMethod', group: 'billing', computed: false } },
+  { id: 'installments', type: 'field', position: { x: 220, y: 430 }, data: { label: 'installments', group: 'billing', computed: false } },
+  { id: 'monthlyPayment', type: 'field', position: { x: 1090, y: 260 }, data: { label: 'monthlyPayment', group: 'billing', computed: true } },
 ]
 
-// ── Edges ──────────────────────────────────────────────────────────────────────
-const valueStyle  = { stroke: '#6366f1', strokeWidth: 2 }
+const valueStyle = { stroke: '#6366f1', strokeWidth: 2 }
 const hiddenStyle = { stroke: '#f59e0b', strokeWidth: 1.5, strokeDasharray: '5 3' }
 
 const edges = [
-  // category → name (options)
-  {
-    id: 'e-cat-name',
-    source: 'category',
-    target: 'name',
-    label: 'options',
-    animated: true,
-    style: valueStyle,
-    labelStyle: { fill: '#818cf8', fontSize: 11 },
-    labelBgStyle: { fill: 'transparent' },
-  },
-  // name → basePrice
-  {
-    id: 'e-name-price',
-    source: 'name',
-    target: 'basePrice',
-    label: 'value',
-    animated: true,
-    style: valueStyle,
-    labelStyle: { fill: '#818cf8', fontSize: 11 },
-    labelBgStyle: { fill: 'transparent' },
-  },
-  // basePrice + quantity → subtotal
-  {
-    id: 'e-price-sub',
-    source: 'basePrice',
-    target: 'subtotal',
-    animated: true,
-    style: valueStyle,
-  },
-  {
-    id: 'e-qty-sub',
-    source: 'quantity',
-    target: 'subtotal',
-    animated: true,
-    style: valueStyle,
-  },
-  // discountType → discountAmount (hidden)
-  {
-    id: 'e-dt-da',
-    source: 'discountType',
-    target: 'discountAmount',
-    label: 'hidden',
-    style: hiddenStyle,
-    labelStyle: { fill: '#fbbf24', fontSize: 11 },
-    labelBgStyle: { fill: 'transparent' },
-  },
-  // subtotal + discountType + discountAmount → total
-  {
-    id: 'e-sub-total',
-    source: 'subtotal',
-    target: 'total',
-    animated: true,
-    style: valueStyle,
-  },
-  {
-    id: 'e-dt-total',
-    source: 'discountType',
-    target: 'total',
-    animated: true,
-    style: valueStyle,
-  },
-  {
-    id: 'e-da-total',
-    source: 'discountAmount',
-    target: 'total',
-    animated: true,
-    style: valueStyle,
-  },
-  // paymentMethod → installments (hidden)
-  {
-    id: 'e-pm-inst',
-    source: 'paymentMethod',
-    target: 'installments',
-    label: 'hidden',
-    style: hiddenStyle,
-    labelStyle: { fill: '#fbbf24', fontSize: 11 },
-    labelBgStyle: { fill: 'transparent' },
-  },
-  // paymentMethod → monthlyPayment (hidden)
-  {
-    id: 'e-pm-mp',
-    source: 'paymentMethod',
-    target: 'monthlyPayment',
-    label: 'hidden',
-    style: hiddenStyle,
-    labelStyle: { fill: '#fbbf24', fontSize: 11 },
-    labelBgStyle: { fill: 'transparent' },
-  },
-  // total + installments → monthlyPayment
-  {
-    id: 'e-total-mp',
-    source: 'total',
-    target: 'monthlyPayment',
-    animated: true,
-    style: valueStyle,
-  },
-  {
-    id: 'e-inst-mp',
-    source: 'installments',
-    target: 'monthlyPayment',
-    animated: true,
-    style: valueStyle,
-  },
+  { id: 'e-cat-name', source: 'category', target: 'name', label: 'options', animated: true, style: valueStyle, labelStyle: { fill: '#818cf8', fontSize: 11 }, labelBgStyle: { fill: 'transparent' } },
+  { id: 'e-name-price', source: 'name', target: 'basePrice', label: 'value', animated: true, style: valueStyle, labelStyle: { fill: '#818cf8', fontSize: 11 }, labelBgStyle: { fill: 'transparent' } },
+  { id: 'e-price-sub', source: 'basePrice', target: 'subtotal', animated: true, style: valueStyle },
+  { id: 'e-qty-sub', source: 'quantity', target: 'subtotal', animated: true, style: valueStyle },
+  { id: 'e-dt-da', source: 'discountType', target: 'discountAmount', label: 'hidden', style: hiddenStyle, labelStyle: { fill: '#fbbf24', fontSize: 11 }, labelBgStyle: { fill: 'transparent' } },
+  { id: 'e-sub-total', source: 'subtotal', target: 'total', animated: true, style: valueStyle },
+  { id: 'e-dt-total', source: 'discountType', target: 'total', animated: true, style: valueStyle },
+  { id: 'e-da-total', source: 'discountAmount', target: 'total', animated: true, style: valueStyle },
+  { id: 'e-pm-inst', source: 'paymentMethod', target: 'installments', label: 'hidden', style: hiddenStyle, labelStyle: { fill: '#fbbf24', fontSize: 11 }, labelBgStyle: { fill: 'transparent' } },
+  { id: 'e-pm-mp', source: 'paymentMethod', target: 'monthlyPayment', label: 'hidden', style: hiddenStyle, labelStyle: { fill: '#fbbf24', fontSize: 11 }, labelBgStyle: { fill: 'transparent' } },
+  { id: 'e-total-mp', source: 'total', target: 'monthlyPayment', animated: true, style: valueStyle },
+  { id: 'e-inst-mp', source: 'installments', target: 'monthlyPayment', animated: true, style: valueStyle },
 ]
 </script>
 
@@ -283,9 +170,7 @@ const edges = [
 }
 .edge-sample.solid  { background: #6366f1; }
 .edge-sample.dashed {
-  background: repeating-linear-gradient(
-    to right, #f59e0b 0, #f59e0b 5px, transparent 5px, transparent 8px
-  );
+  background: repeating-linear-gradient(to right, #f59e0b 0, #f59e0b 5px, transparent 5px, transparent 8px);
 }
 
 .graph-wrapper {
@@ -302,7 +187,6 @@ const edges = [
   border-top: 1px solid var(--vp-c-border);
 }
 
-/* Custom node styles */
 .mesh-node {
   padding: 8px 14px;
   border-radius: 8px;

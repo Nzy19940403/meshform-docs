@@ -3,18 +3,18 @@
     <!-- ── Header ─────────────────────────────────────────────────────── -->
     <div class="ins-header">
       <span class="ins-badge">⧩ MeshForm</span>
-      <span class="ins-title">人寿保险投保申请 — 22 条联动规则</span>
-      <span class="ins-desc">投保人/被保险人分离、BMI 自动计算、职业风险附加费、险种联动保费、核保警告联动</span>
+      <span class="ins-title">{{ copy.title }}</span>
+      <span class="ins-desc">{{ copy.desc }}</span>
     </div>
 
     <!-- v-app 提供 Vuetify theme context，设为透明不干扰外层样式 -->
     <v-app theme="dark" class="ins-vapp">
       <!-- ── 表单主体 ─────────────────────────────────────────────────── -->
       <div class="ins-body">
-        <MeshForm :schema="schema" :rules="rules" :uischema="uischema" :renderers="customRenderers" @change="onFormChange" @submit="onSubmit">
+        <MeshForm :schema="formSchema" :rules="rules" :uischema="formUiSchema" :renderers="customRenderers" @change="onFormChange" @submit="onSubmit">
           <template #actions="{ submit }">
             <div class="ins-actions">
-              <v-btn color="primary" variant="tonal" @click="submit">提交投保申请</v-btn>
+              <v-btn color="primary" variant="tonal" @click="submit">{{ copy.submit }}</v-btn>
             </div>
           </template>
         </MeshForm>
@@ -23,7 +23,7 @@
       <!-- ── 提交结果 ─────────────────────────────────────────────────── -->
       <div v-if="submitted" class="ins-result">
         <div class="ins-result-hd">
-          <span class="ins-dot ins-dot--green" />✓ 申请已提交
+          <span class="ins-dot ins-dot--green" />{{ copy.result }}
         </div>
         <pre class="ins-result-pre">{{ submittedStr }}</pre>
       </div>
@@ -38,6 +38,150 @@ import type { MeshFormSchema, FromDescriptor } from '@meshflow/form-vue'
 import { rankWith, and, uiTypeIs, schemaMatches } from '@jsonforms/core'
 import NumberInputRenderer from './NumberInputRenderer.vue'
 import WarningRenderer from './WarningRenderer.vue'
+
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+const copyMap = {
+  zh: {
+    title: '人寿保险投保申请 · 22 条联动规则',
+    desc: '投保人与被保险人分离、BMI 自动计算、职业风险附加费、险种联动保费、核保警告联动',
+    submit: '提交投保申请',
+    result: '申请已提交',
+  },
+  en: {
+    title: 'Life Insurance Application · 22 rules',
+    desc: 'Separated applicant and insured profiles, BMI derivation, occupation surcharges, linked premium calculation, and underwriting alerts.',
+    submit: 'Submit application',
+    result: 'Application submitted',
+  },
+} as const
+const copy = computed(() => (props.en ? copyMap.en : copyMap.zh))
+
+const enText = {
+  "人寿保险投保申请": "Life insurance application",
+  "投保人信息": "Applicant",
+  "姓名": "Full name",
+  "请输入投保人姓名": "Enter applicant name",
+  "性别": "Gender",
+  "男": "Male",
+  "女": "Female",
+  "出生年份": "Birth year",
+  "年龄": "Age",
+  "联系电话": "Phone number",
+  "请输入手机号码": "Enter phone number",
+  "证件类型": "ID type",
+  "证件号码": "ID number",
+  "与被保险人关系": "Relationship to insured",
+  "本人": "Self",
+  "配偶": "Spouse",
+  "子女": "Child",
+  "父母": "Parent",
+  "其他": "Other",
+  "被保险人信息": "Insured",
+  "请输入被保险人姓名": "Enter insured name",
+  "职业类别": "Occupation",
+  "职业风险等级": "Occupation risk tier",
+  "普通职业（标准费率）": "Standard risk",
+  "险种方案": "Coverage design",
+  "险种": "Product",
+  "定期寿险": "Term life",
+  "终身寿险": "Whole life",
+  "两全险": "Endowment",
+  "重疾险": "Critical illness",
+  "保险期限": "Coverage term",
+  "缴费期限": "Payment term",
+  "缴费频率": "Payment frequency",
+  "年缴": "Annual",
+  "半年缴": "Semiannual",
+  "季缴": "Quarterly",
+  "月缴": "Monthly",
+  "缴费方式": "Payment method",
+  "银行卡自动划扣": "Bank auto-debit",
+  "支付宝": "Alipay",
+  "微信支付": "WeChat Pay",
+  "信用卡": "Credit card",
+  "保额 (万)": "Coverage (x10k CNY)",
+  "最高可选保额": "Coverage cap",
+  "最高 2000 万": "Max 20,000,000 CNY",
+  "附加意外险 (+5%)": "Add accident rider (+5%)",
+  "附加残疾险 (+8%)": "Add disability rider (+8%)",
+  "健康告知": "Health disclosure",
+  "身高 (cm)": "Height (cm)",
+  "体重 (kg)": "Weight (kg)",
+  "体重状态": "BMI status",
+  "正常": "Normal",
+  "有吸烟史": "Smoking history",
+  "患有慢性病": "Chronic disease",
+  "两年内手术": "Surgery in last 2 years",
+  "家族病史": "Family medical history",
+  "受益人": "Beneficiary",
+  "受益人类型": "Beneficiary type",
+  "法定受益人": "Legal beneficiary",
+  "指定受益人": "Designated beneficiary",
+  "受益人姓名": "Beneficiary name",
+  "与被保人关系": "Relationship to insured",
+  "受益比例 (%)": "Share (%)",
+  "核保提示": "Underwriting alerts",
+  "职业风险": "Occupation risk",
+  "您选择的职业属于高风险职业，承保需经核保审查并收取额外保费，请提供职业证明材料。": "The selected occupation is high risk. Underwriting review and extra premium may apply. Please provide occupation proof.",
+  "体重异常": "BMI alert",
+  "BMI ≥ 28，属于超重/肥胖范围，将收取体重附加费并可能需要体检核实。": "BMI >= 28 falls into overweight or obesity and may trigger a surcharge and a medical exam.",
+  "慢性病史": "Chronic condition",
+  "申报有慢性病史，请在投保材料中附上近期病历及检查报告，承保条件由核保人员审定。": "A chronic condition was declared. Please attach recent records and exam reports for underwriting review.",
+  "年龄超限": "Age limit",
+  "被保险人年龄超过 60 岁，部分险种可能受限或需安排额外体检，请联系客服确认。": "The insured is over age 60. Some products may be limited or require extra medical exams.",
+  "手术史": "Surgery history",
+  "两年内有手术史，请在核保资料中附上手术记录及出院小结，以便核保评估。": "A surgery was reported within the last two years. Please attach surgery records and discharge notes.",
+  "申报有家族遗传病史，核保时需说明具体病种，承保条件由核保人员审定，可能影响保费或保障范围。": "A family medical history was declared. Specific conditions must be disclosed and may affect pricing or coverage.",
+  "保费汇总": "Premium summary",
+  "基础费率 (‰)": "Base rate (‰)",
+  "基础年保费 (¥)": "Base annual premium (¥)",
+  "应缴年保费 (¥)": "Final annual premium (¥)",
+  "每期金额 (¥)": "Per-payment amount (¥)",
+  "体检要求": "Medical exam",
+  "无需体检": "No exam required",
+  "居民身份证": "National ID",
+  "护照": "Passport",
+  "军官证": "Military ID",
+  "港澳居民来往内地通行证": "HK/Macau travel permit",
+  "请输入 18 位身份证号码": "Enter 18-digit ID number",
+  "请输入护照号码": "Enter passport number",
+  "请输入军官证号码": "Enter military ID number",
+  "请输入港澳通行证号码": "Enter HK/Macau travel permit number",
+  "请输入证件号码": "Enter ID number",
+  "行政管理": "Administration",
+  "技术研发": "Engineering and R&D",
+  "销售内勤": "Inside sales",
+  "销售外勤": "Field sales",
+  "体力劳动工人": "Manual labor",
+  "驾驶员": "Driver",
+  "特殊工种/化工": "Special operations / chemical",
+  "高空/潜水作业": "High-altitude / diving work",
+  "10 年": "10 years",
+  "15 年": "15 years",
+  "20 年": "20 years",
+  "25 年": "25 years",
+  "30 年": "30 years",
+  "终身": "Lifetime",
+  "至 70 岁": "To age 70",
+  "期缴（随保险期）": "Pay to term",
+  "一次性缴清": "Single premium",
+  "5 年缴清": "Paid in 5 years",
+  "10 年缴清": "Paid in 10 years",
+  "20 年缴清": "Paid in 20 years",
+  "终身缴费": "Lifetime pay",
+  "期满缴清": "Pay to term"
+} as const
+
+function localizeDeep(value, dict) {
+  if (Array.isArray(value)) return value.map(item => localizeDeep(item, dict))
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, dict)]))
+  }
+  if (typeof value === 'string') return dict[value] ?? value
+  return value
+}
 
 // tester 必须用 schemaMatches：第二个参数 s 是根 schema，
 // schemaMatches 会按 uischema.scope 路径解析出具体字段的 schema 再传给谓词
@@ -65,7 +209,7 @@ const CURRENT_YEAR = new Date().getFullYear()
 // 投保人/被保险人出生年份范围：当前年 - 18 往前 65 年（18~82 岁）
 const BIRTH_YEAR_OPTIONS = Array.from({ length: 65 }, (_, i) => {
   const y = CURRENT_YEAR - 18 - i
-  return { label: `${y} 年`, value: y }
+  return { label: props.en ? String(y) : `${y} 年`, value: y }
 })
 
 const OCCUPATION_OPTIONS = [
@@ -80,17 +224,44 @@ const OCCUPATION_OPTIONS = [
 ]
 
 const TERM_OPTIONS: Record<string, { label: string; value: string }[]> = {
-  term:  [{ label: '10 年', value: '10' }, { label: '20 年', value: '20' }, { label: '30 年', value: '30' }],
-  whole: [{ label: '终身',  value: 'lifetime' }],
-  endow: [{ label: '10 年', value: '10' }, { label: '15 年', value: '15' }, { label: '20 年', value: '20' }, { label: '25 年', value: '25' }, { label: '30 年', value: '30' }],
-  ci:    [{ label: '20 年', value: '20' }, { label: '30 年', value: '30' }, { label: '至 70 岁', value: '70' }, { label: '终身', value: 'lifetime' }],
+  term:  [{ label: props.en ? '10 years' : '10 年', value: '10' }, { label: props.en ? '20 years' : '20 年', value: '20' }, { label: props.en ? '30 years' : '30 年', value: '30' }],
+  whole: [{ label: props.en ? 'Lifetime' : '终身',  value: 'lifetime' }],
+  endow: [
+    { label: props.en ? '10 years' : '10 年', value: '10' },
+    { label: props.en ? '15 years' : '15 年', value: '15' },
+    { label: props.en ? '20 years' : '20 年', value: '20' },
+    { label: props.en ? '25 years' : '25 年', value: '25' },
+    { label: props.en ? '30 years' : '30 年', value: '30' },
+  ],
+  ci: [
+    { label: props.en ? '20 years' : '20 年', value: '20' },
+    { label: props.en ? '30 years' : '30 年', value: '30' },
+    { label: props.en ? 'To age 70' : '至 70 岁', value: '70' },
+    { label: props.en ? 'Lifetime' : '终身', value: 'lifetime' },
+  ],
 }
 
 const PAYMENT_PERIOD_OPTIONS: Record<string, { label: string; value: string }[]> = {
-  term:  [{ label: '期缴（随保险期）', value: 'same' }, { label: '一次性缴清', value: 'single' }],
-  whole: [{ label: '5 年缴清', value: '5' }, { label: '10 年缴清', value: '10' }, { label: '20 年缴清', value: '20' }, { label: '终身缴费', value: 'lifetime' }],
-  endow: [{ label: '5 年缴清', value: '5' }, { label: '10 年缴清', value: '10' }, { label: '期满缴清', value: 'same' }],
-  ci:    [{ label: '10 年缴清', value: '10' }, { label: '20 年缴清', value: '20' }, { label: '终身缴费', value: 'lifetime' }],
+  term:  [
+    { label: props.en ? 'Pay to term' : '期缴（随保险期）', value: 'same' },
+    { label: props.en ? 'Single premium' : '一次性缴清', value: 'single' },
+  ],
+  whole: [
+    { label: props.en ? 'Paid in 5 years' : '5 年缴清', value: '5' },
+    { label: props.en ? 'Paid in 10 years' : '10 年缴清', value: '10' },
+    { label: props.en ? 'Paid in 20 years' : '20 年缴清', value: '20' },
+    { label: props.en ? 'Lifetime pay' : '终身缴费', value: 'lifetime' },
+  ],
+  endow: [
+    { label: props.en ? 'Paid in 5 years' : '5 年缴清', value: '5' },
+    { label: props.en ? 'Paid in 10 years' : '10 年缴清', value: '10' },
+    { label: props.en ? 'Pay to term' : '期满缴清', value: 'same' },
+  ],
+  ci: [
+    { label: props.en ? 'Paid in 10 years' : '10 年缴清', value: '10' },
+    { label: props.en ? 'Paid in 20 years' : '20 年缴清', value: '20' },
+    { label: props.en ? 'Lifetime pay' : '终身缴费', value: 'lifetime' },
+  ],
 }
 
 const RATE_TABLE: Record<string, number[]> = {
@@ -335,11 +506,11 @@ const schema: MeshFormSchema = {
 // 统一的证件号码占位文本生成器
 function idPlaceholder(t: string) {
   return ({
-    id:       '请输入 18 位身份证号码',
-    passport: '请输入护照号码',
-    military: '请输入军官证号码',
-    hk:       '请输入港澳通行证号码',
-  } as Record<string, string>)[t] ?? '请输入证件号码'
+    id: props.en ? 'Enter 18-digit ID number' : '请输入 18 位身份证号码',
+    passport: props.en ? 'Enter passport number' : '请输入护照号码',
+    military: props.en ? 'Enter military ID number' : '请输入军官证号码',
+    hk: props.en ? 'Enter HK/Macau travel permit number' : '请输入港澳通行证号码',
+  } as Record<string, string>)[t] ?? (props.en ? 'Enter ID number' : '请输入证件号码')
 }
 
 // ── Rules ─────────────────────────────────────────────────────────────────────
@@ -357,9 +528,13 @@ const rules: Record<string, FromDescriptor> = {
   'insured.occupationRisk.value': from('insured.occupation', (occ: string) => {
     const o = OCCUPATION_OPTIONS.find(x => x.value === occ)
     if (!o) return ''
-    if (o.surcharge === 0)  return '普通职业（标准费率）'
-    if (o.surcharge <= 0.3) return `体力职业（附加 ${Math.round(o.surcharge * 100)}%）`
-    return `高危职业（附加 ${Math.round(o.surcharge * 100)}%）`
+    if (o.surcharge === 0) return props.en ? 'Standard risk' : '普通职业（标准费率）'
+    if (o.surcharge <= 0.3) return props.en
+      ? `Manual-risk tier (+${Math.round(o.surcharge * 100)}%)`
+      : `体力职业（附加 ${Math.round(o.surcharge * 100)}%）`
+    return props.en
+      ? `High-risk tier (+${Math.round(o.surcharge * 100)}%)`
+      : `高危职业（附加 ${Math.round(o.surcharge * 100)}%）`
   }),
 
   // ── 健康告知联动 ──────────────────────────────────────────────────
@@ -369,12 +544,12 @@ const rules: Record<string, FromDescriptor> = {
   }),
 
   'health.bmiStatus.value': from('health.bmi', (b: number) => {
-    if (!b)        return '—'
-    if (b < 18.5)  return '偏瘦'
-    if (b < 24)    return '正常'
-    if (b < 28)    return '超重'
-    if (b < 32)    return '肥胖 I 级'
-    return '肥胖 II 级'
+    if (!b) return '—'
+    if (b < 18.5) return props.en ? 'Underweight' : '偏瘦'
+    if (b < 24) return props.en ? 'Normal' : '正常'
+    if (b < 28) return props.en ? 'Overweight' : '超重'
+    if (b < 32) return props.en ? 'Obesity I' : '肥胖 I 级'
+    return props.en ? 'Obesity II' : '肥胖 II 级'
   }),
 
   // ── 险种方案联动 ──────────────────────────────────────────────────
@@ -395,7 +570,7 @@ const rules: Record<string, FromDescriptor> = {
   }),
 
   'product.maxCoverageNote.value': from('product.type', (t: string) =>
-    `最高可选 ${MAX_COVERAGE[t] ?? 2000} 万`
+    props.en ? `Max coverage ${(MAX_COVERAGE[t] ?? 2000) * 10000} CNY` : `最高可选 ${MAX_COVERAGE[t] ?? 2000} 万`
   ),
 
   // ── 保费计算联动 ──────────────────────────────────────────────────
@@ -421,7 +596,9 @@ const rules: Record<string, FromDescriptor> = {
   ),
 
   'premium.medicalNote.value': from('product.coverageAmount', (ca: number) =>
-    ca >= MEDICAL_THRESHOLD ? `保额 ≥ ${MEDICAL_THRESHOLD} 万，需安排体检` : '无需体检'
+    ca >= MEDICAL_THRESHOLD
+      ? (props.en ? `Coverage >= ${MEDICAL_THRESHOLD * 10000} CNY, medical exam required` : `保额 ≥ ${MEDICAL_THRESHOLD} 万，需安排体检`)
+      : (props.en ? 'No exam required' : '无需体检')
   ),
 
   // ── 受益人字段显隐 ────────────────────────────────────────────────
@@ -443,13 +620,19 @@ const rules: Record<string, FromDescriptor> = {
   // 警告文本动态化（带实际值）
   'warnings.highRiskNote.value': from('insured.occupation', (occ: string) => {
     const o = OCCUPATION_OPTIONS.find(x => x.value === occ)
-    return `职业"${o?.label}"属于高风险职业（附加费率 +${Math.round((o?.surcharge ?? 0) * 100)}%），承保需经核保审查，请提供职业证明材料。`
+    return props.en
+      ? `Occupation "${o?.label}" is classified as high risk (+${Math.round((o?.surcharge ?? 0) * 100)}%). Underwriting review and occupation proof are required.`
+      : `职业"${o?.label}"属于高风险职业（附加费率 +${Math.round((o?.surcharge ?? 0) * 100)}%），承保需经核保审查，请提供职业证明材料。`
   }),
   'warnings.bmiNote.value': from(['health.bmi', 'health.bmiStatus'], (b: number, status: string) =>
-    `当前 BMI ${b}（${status}），超出正常范围，将收取体重附加费（+${b >= 32 ? 20 : 10}%）并可能需要体检核实。`
+    props.en
+      ? `Current BMI is ${b} (${status}), outside the normal range. A surcharge of +${b >= 32 ? 20 : 10}% may apply, and a medical exam may be required.`
+      : `当前 BMI ${b}（${status}），超出正常范围，将收取体重附加费（+${b >= 32 ? 20 : 10}%）并可能需要体检核实。`
   ),
   'warnings.ageNote.value': from('insured.age', (a: number) =>
-    `被保险人年龄 ${a} 岁，超过 60 岁上限，部分险种受限，请联系客服确认可投险种及体检安排。`
+    props.en
+      ? `The insured is ${a} years old, above the age-60 threshold. Some products may be restricted and may require additional medical arrangements.`
+      : `被保险人年龄 ${a} 岁，超过 60 岁上限，部分险种受限，请联系客服确认可投险种及体检安排。`
   ),
 
   // 家族病史影响保费
@@ -526,6 +709,9 @@ const uischema = {
     ),
   ],
 }
+
+const formSchema = computed(() => (props.en ? localizeDeep(schema, enText) : schema))
+const formUiSchema = computed(() => (props.en ? localizeDeep(uischema, enText) : uischema))
 
 // ── 状态 ──────────────────────────────────────────────────────────────────────
 const submitted = ref(false)

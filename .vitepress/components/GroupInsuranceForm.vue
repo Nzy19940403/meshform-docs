@@ -1,24 +1,24 @@
 <template>
   <div class="gi-wrap">
     <div class="gi-header">
-      <span class="gi-badge">⧩ MeshForm</span>
-      <span class="gi-title">企业团体险组合定价 — 43 条联动规则</span>
-      <span class="gi-desc">规模×行业×地区×赔付四维系数 · 6 险种联动折扣 · 税前列支自动核算</span>
+      <span class="gi-badge">MeshForm</span>
+      <span class="gi-title">{{ copy.title }}</span>
+      <span class="gi-desc">{{ copy.desc }}</span>
     </div>
 
     <v-app theme="dark" class="gi-vapp">
       <div class="gi-body">
         <MeshForm
-          :schema="schema"
+          :schema="formSchema"
           :rules="rules"
-          :uischema="uischema"
+          :uischema="formUiSchema"
           :renderers="customRenderers"
           @change="onFormChange"
           @submit="onSubmit"
         >
           <template #actions="{ submit }">
             <div class="gi-actions">
-              <v-btn color="primary" variant="tonal" @click="submit">生成报价方案</v-btn>
+              <v-btn color="primary" variant="tonal" @click="submit">{{ copy.submit }}</v-btn>
             </div>
           </template>
         </MeshForm>
@@ -26,7 +26,7 @@
 
       <div v-if="submitted" class="gi-result">
         <div class="gi-result-hd">
-          <span class="gi-dot gi-dot--green" />✓ 报价方案已生成
+          <span class="gi-dot gi-dot--green" />{{ copy.result }}
         </div>
         <pre class="gi-result-pre">{{ submittedStr }}</pre>
       </div>
@@ -51,6 +51,133 @@ const numberInputTester = rankWith(10, and(
   )
 ))
 const customRenderers = [{ tester: numberInputTester, renderer: markRaw(NumberInputRenderer) }]
+
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+const copyMap = {
+  zh: {
+    title: '企业团体险组合定价 · 43 条联动规则',
+    desc: '规模、行业、地区、赔付四维系数，六险种联动折扣，税前列支自动核算。',
+    submit: '生成报价方案',
+    result: '报价方案已生成',
+  },
+  en: {
+    title: 'Group Insurance Pricing · 43 rules',
+    desc: 'Four-dimensional rate factors, six-product bundle discounts, and automatic pre-tax deduction calculation.',
+    submit: 'Generate quote',
+    result: 'Quote generated',
+  },
+} as const
+const copy = computed(() => (props.en ? copyMap.en : copyMap.zh))
+
+const enText = {
+  "企业团体险组合定价": "Group insurance bundle pricing",
+  "企业基本信息": "Company details",
+  "员工总数": "Employee count",
+  "行业类别": "Industry",
+  "金融/保险": "Finance / insurance",
+  "科技/互联网": "Technology / internet",
+  "制造业": "Manufacturing",
+  "建筑/工程": "Construction / engineering",
+  "医疗/健康": "Healthcare",
+  "零售/贸易": "Retail / trade",
+  "运输/物流": "Transport / logistics",
+  "所在地区": "Region",
+  "一线城市（北上广深）": "Tier-1 cities",
+  "新一线城市": "New tier-1 cities",
+  "二线城市": "Tier-2 cities",
+  "三线及以下": "Tier-3 and below",
+  "连续无赔付年数": "Claim-free years",
+  "人均月工资 (元)": "Average monthly salary (¥)",
+  "费率调整系数": "Rate factors",
+  "规模系数": "Scale factor",
+  "行业系数": "Industry factor",
+  "地区系数": "Region factor",
+  "赔付系数": "Claims factor",
+  "综合系数 ×": "Combined factor ×",
+  "医疗险": "Medical",
+  "投保医疗险": "Enable medical",
+  "保额上限 (万)": "Coverage cap (x10k CNY)",
+  "参保率 (%)": "Enrollment rate (%)",
+  "团体寿险": "Group life",
+  "投保团体寿险": "Enable group life",
+  "保额 (万)": "Coverage (x10k CNY)",
+  "团体意外险": "Group accident",
+  "投保意外险": "Enable accident",
+  "重疾险": "Critical illness",
+  "投保重疾险": "Enable critical illness",
+  "保额上限提示": "Coverage cap hint",
+  "住院津贴险 ★需医疗险": "Hospital cash benefit ★ requires medical",
+  "投保住院津贴险": "Enable hospital cash",
+  "日额津贴 (元)": "Daily benefit (¥)",
+  "门诊险 ★需医疗险": "Outpatient benefit ★ requires medical",
+  "投保门诊险": "Enable outpatient",
+  "年度限额 (元)": "Annual limit (¥)",
+  "组合折扣": "Bundle discount",
+  "已选险种数": "Enabled products",
+  "组合折扣率 (%)": "Bundle discount (%)",
+  "折扣说明": "Discount note",
+  "险种费用明细": "Premium breakdown",
+  "医疗险参保人数": "Medical insured",
+  "医疗险年保费 (¥)": "Medical annual premium (¥)",
+  "寿险参保人数": "Life insured",
+  "寿险年保费 (¥)": "Life annual premium (¥)",
+  "意外险参保人数": "Accident insured",
+  "意外险年保费 (¥)": "Accident annual premium (¥)",
+  "重疾险参保人数": "Critical illness insured",
+  "重疾险年保费 (¥)": "Critical illness annual premium (¥)",
+  "住院津贴险参保人数": "Hospital cash insured",
+  "住院津贴险年保费 (¥)": "Hospital cash annual premium (¥)",
+  "门诊险参保人数": "Outpatient insured",
+  "门诊险年保费 (¥)": "Outpatient annual premium (¥)",
+  "费用汇总": "Summary",
+  "企业总年保费 (¥)": "Total annual premium (¥)",
+  "人均月均保费 (¥)": "Per-capita monthly premium (¥)",
+  "折扣节省金额 (¥)": "Discount savings (¥)",
+  "税前抵扣上限 (¥)": "Pre-tax deduction cap (¥)",
+  "实际可抵扣 (¥)": "Deductible amount (¥)",
+  "税务说明": "Tax note",
+  "费率调整系数（自动计算）": "Rate factors (auto-calculated)",
+  "险种配置": "Product configuration",
+  "险种费用明细（自动计算）": "Premium breakdown (auto-calculated)"
+} as const
+
+function localizeDeep(value, dict) {
+  if (Array.isArray(value)) return value.map(item => localizeDeep(item, dict))
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, dict)]))
+  }
+  if (typeof value === 'string') return dict[value] ?? value
+  return value
+}
+
+function bundleNote(count: number, discount: number) {
+  if (discount > 0) {
+    return props.en
+      ? 'Selected ' + count + ' products, bundle discount ' + discount + '%'
+      : '已选 ' + count + ' 种险种，享 ' + discount + '% 组合优惠'
+  }
+  return props.en
+    ? 'Selected ' + count + ' products, bundle discount starts from 2 products'
+    : '已选 ' + count + ' 种险种，2 种起享组合优惠'
+}
+
+function taxNote(total: number, limit: number) {
+  return total > limit
+    ? (props.en
+      ? 'Annual premium exceeds the pre-tax deduction cap by ¥' + (total - limit).toLocaleString() + ', and the excess must be expensed after tax.'
+      : '年保费超出税前抵扣上限 ¥' + (total - limit).toLocaleString() + '，超出部分需税后列支')
+    : (props.en
+      ? 'The annual premium is within the pre-tax deduction cap and can be fully deducted before tax (within 5% of total annual payroll).'
+      : '年保费在税前抵扣范围内，可全额税前列支（员工年工资总额 5% 以内）')
+}
+
+function ciCoverageHintText(coverage: number) {
+  return coverage > 0
+    ? (props.en ? 'No more than 80% of life coverage (max ' + Math.round(coverage * 0.8) + ' x10k CNY)' : '不超过寿险保额 80%（最高 ' + Math.round(coverage * 0.8) + ' 万）')
+    : (props.en ? 'Configure life coverage first' : '需先配置寿险')
+}
 
 // ── 静态费率表 ────────────────────────────────────────────────────────────────
 /** 规模系数：员工越多，单人费率越低 */
@@ -111,7 +238,7 @@ const INIT_COMBINED = Math.round(INIT_SCALE * INIT_INDUSTRY * INIT_REGION * INIT
 
 const INIT_BUNDLE_COUNT = 3  // medical + life + accident
 const INIT_BUNDLE_DISC  = bundleDiscount(INIT_BUNDLE_COUNT)  // 10
-const INIT_BUNDLE_NOTE  = `已选 ${INIT_BUNDLE_COUNT} 种险种，享 ${INIT_BUNDLE_DISC}% 组合优惠`
+const INIT_BUNDLE_NOTE  = bundleNote(INIT_BUNDLE_COUNT, INIT_BUNDLE_DISC)
 
 const INIT_MED_INS  = Math.round(200 * 90  / 100)   // 180
 const INIT_LIFE_INS = Math.round(200 * 100 / 100)   // 200
@@ -129,11 +256,9 @@ const INIT_PER_MO    = Math.round(INIT_TOTAL / 200 / 12)
 const INIT_SAVED     = Math.round(INIT_TOTAL * INIT_BUNDLE_DISC / (100 - INIT_BUNDLE_DISC))
 const INIT_TAX_LIM   = Math.round(200 * 8000 * 12 * 0.05)  // 96000
 const INIT_TAX_ACT   = Math.min(INIT_TOTAL, INIT_TAX_LIM)
-const INIT_TAX_NOTE  = INIT_TOTAL > INIT_TAX_LIM
-  ? `年保费超出税前抵扣上限 ¥${(INIT_TOTAL - INIT_TAX_LIM).toLocaleString()}，超出部分需税后列支`
-  : `年保费在税前抵扣范围内，可全额税前列支（员工年工资总额 5% 以内）`
+const INIT_TAX_NOTE  = taxNote(INIT_TOTAL, INIT_TAX_LIM)
 
-const INIT_CI_HINT = `不超过寿险保额 80%（最高 ${Math.round(50 * 0.8)} 万）`  // life.coverage default=50
+const INIT_CI_HINT = ciCoverageHintText(50)  // life.coverage default=50
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 const schema: MeshFormSchema = {
@@ -334,7 +459,7 @@ const rules: Record<string, FromDescriptor> = {
 
   // ── ③ 重疾险保额上限提示（1 条）────────────────────────────────────────────
   'ci.coverageHint.value': from('life.coverage', (c: number) =>
-    c > 0 ? `不超过寿险保额 80%（最高 ${Math.round(c * 0.8)} 万）` : '需先配置寿险'
+    ciCoverageHintText(c)
   ),
 
   // ── ④ 组合折扣（3 条）──────────────────────────────────────────────────────
@@ -347,9 +472,7 @@ const rules: Record<string, FromDescriptor> = {
   ),
   'bundle.discount.value': from('bundle.count', (n: number) => bundleDiscount(n)),
   'bundle.note.value': from(['bundle.count', 'bundle.discount'],
-    (n: number, d: number) => d > 0
-      ? `已选 ${n} 种险种，享 ${d}% 组合优惠`
-      : `已选 ${n} 种险种，2 种起享组合优惠`
+    (n: number, d: number) => bundleNote(n, d)
   ),
 
   // ── ⑤ 各险种参保人数（6 条）────────────────────────────────────────────────
@@ -432,9 +555,7 @@ const rules: Record<string, FromDescriptor> = {
   ),
   'summary.taxNote.value': from(
     ['summary.total', 'summary.taxLimit'],
-    (total: number, limit: number) => total > limit
-      ? `年保费超出税前抵扣上限 ¥${(total - limit).toLocaleString()}，超出部分需税后列支`
-      : `年保费在税前抵扣范围内，可全额税前列支（员工年工资总额 5% 以内）`
+    (total: number, limit: number) => taxNote(total, limit)
   ),
 
   // ── ⑧ 警告条件（2 条）──────────────────────────────────────────────────────
@@ -570,6 +691,9 @@ const uischema = {
     ),
   ],
 }
+
+const formSchema = computed(() => (props.en ? localizeDeep(schema, enText) : schema))
+const formUiSchema = computed(() => (props.en ? localizeDeep(uischema, enText) : uischema))
 
 // ── 状态 ──────────────────────────────────────────────────────────────────────
 const submitted    = ref(false)

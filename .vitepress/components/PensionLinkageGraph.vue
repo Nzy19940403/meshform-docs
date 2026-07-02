@@ -2,8 +2,8 @@
   <div class="pen-graph-wrap">
     <div class="graph-header">
       <span class="graph-badge">DAG</span>
-      <span class="graph-title">养老年金联动依赖图（双向计算链）</span>
-      <span class="graph-hint">正向推算退休金 · 反向推算缺口，共享同一套参数</span>
+      <span class="graph-title">{{ copy.title }}</span>
+      <span class="graph-hint">{{ copy.hint }}</span>
     </div>
     <div class="graph-body">
       <VueFlow
@@ -22,26 +22,97 @@
       </VueFlow>
     </div>
     <div class="graph-legend">
-      <span class="leg-item"><span class="leg-dot personal"></span>个人信息</span>
-      <span class="leg-item"><span class="leg-dot strategy"></span>投资策略</span>
-      <span class="leg-item"><span class="leg-dot contribution"></span>缴费方案</span>
-      <span class="leg-item"><span class="leg-dot forward"></span>正向推算</span>
-      <span class="leg-item"><span class="leg-dot reverse"></span>反向推算</span>
-      <span class="leg-item"><span class="leg-edge blue"></span>值传播</span>
+      <span class="leg-item"><span class="leg-dot personal"></span>{{ copy.legend[0] }}</span>
+      <span class="leg-item"><span class="leg-dot strategy"></span>{{ copy.legend[1] }}</span>
+      <span class="leg-item"><span class="leg-dot contribution"></span>{{ copy.legend[2] }}</span>
+      <span class="leg-item"><span class="leg-dot forward"></span>{{ copy.legend[3] }}</span>
+      <span class="leg-item"><span class="leg-dot reverse"></span>{{ copy.legend[4] }}</span>
+      <span class="leg-item"><span class="leg-edge blue"></span>{{ copy.legend[5] }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { VueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
+
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+const copyMap = {
+  zh: {
+    title: '养老年金联动依赖图（双向计算链）',
+    hint: '正向推算退休金，反向推算缺口，共享同一套参数',
+    legend: ['个人信息', '投资策略', '缴费方案', '正向推算', '反向推算', '值传播'],
+  },
+  en: {
+    title: 'Pension dependency graph (two-way calculation chain)',
+    hint: 'Forward retirement projection and reverse gap planning share the same parameter set.',
+    legend: ['Personal', 'Strategy', 'Contribution', 'Forward', 'Reverse', 'Value propagation'],
+  },
+} as const
+const copy = computed(() => (props.en ? copyMap.en : copyMap.zh))
+
+const enText = {
+  "当前年龄": "Current age",
+  "退休年龄": "Retirement age",
+  "当前月薪": "Current monthly salary",
+  "薪资增长率": "Income growth rate",
+  "领取年限": "Withdrawal years",
+  "投资风格": "Risk profile",
+  "通胀率": "Inflation",
+  "个人月缴": "Personal monthly",
+  "单位匹配比例": "Employer match",
+  "目标替代率": "Target replacement rate",
+  "用户设定": "user input",
+  "积累年数": "Accumulation years",
+  "退休年龄 - 当前年龄": "retirement age - current age",
+  "年化收益率": "Annual return",
+  "← 投资风格": "<- risk profile",
+  "月缴合计": "Total monthly",
+  "个人 × (1 + 匹配比)": "personal × (1 + match)",
+  "退休月薪": "Salary at retirement",
+  "月薪 × (1+g)^n": "salary × (1+g)^n",
+  "年缴合计": "Annual total",
+  "月缴合计 × 12": "total monthly × 12",
+  "税优上限": "Tax-advantaged cap",
+  "月薪 × 12 × 6%": "salary × 12 × 6%",
+  "积累终值": "Accumulated FV",
+  "FV(r, n×12, PMT)": "FV(r, n×12, PMT)",
+  "月退休金": "Monthly pension",
+  "PMT(r×0.5, n×12, FV)": "PMT(r×0.5, n×12, FV)",
+  "实际购买力": "Real purchasing power",
+  "FV ÷ (1+通胀)^n": "FV ÷ (1+inflation)^n",
+  "目标月退休金": "Target monthly pension",
+  "退休月薪 × 目标替代率": "retirement salary × target rate",
+  "替代率": "Replacement rate",
+  "月退休金 ÷ 退休月薪": "monthly pension ÷ retirement salary",
+  "所需积累": "Required accumulation",
+  "PV(r×0.5, n×12, 目标)": "PV(r×0.5, n×12, target)",
+  "替代率评级": "Replacement status",
+  "🟢优秀 / 🟡良好 / 🔴不足": "🟢/🟡/🔴 status",
+  "所需月缴": "Required monthly total",
+  "PMT(r, n×12, 所需积累)": "PMT(r, n×12, required accumulation)",
+  "个人缺口": "Personal gap",
+  "所需月缴 ÷ (1+匹配) - 个人月缴": "required total ÷ (1+match) - personal monthly"
+} as const
+
+function localizeDeep(value, dict) {
+  if (Array.isArray(value)) return value.map(item => localizeDeep(item, dict))
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, dict)]))
+  }
+  if (typeof value === 'string') return dict[value] ?? value
+  return value
+}
 
 // ── 节点定义 ─────────────────────────────────────────────────────────────────
 // Top half  (y=0-440):  正向推算链 → 积累 FV → 月退休金 → 替代率
 // Bottom half (y=520-700): 反向推算链 → 目标月退休金 → 所需积累 → 月缺口
 
-const nodes = [
+const rawNodes = [
   // ── Layer 0: User inputs ─────────────────────────────────────────────────
   { id: 'currentAge',       type: 'field', position: { x: 0,    y: 0   }, data: { label: '当前年龄',     group: 'personal',     sub: 'currentAge' } },
   { id: 'retirementAge',    type: 'field', position: { x: 0,    y: 65  }, data: { label: '退休年龄',     group: 'personal',     sub: 'retirementAge' } },
@@ -81,6 +152,8 @@ const nodes = [
   // ── Layer 6: Gap ─────────────────────────────────────────────────────────
   { id: 'personalGap',          type: 'field', position: { x: 1400, y: 700 }, data: { label: '个人缺口',     group: 'reverse', sub: '所需月缴 ÷ (1+匹配) - 个人月缴' } },
 ]
+
+const nodes = computed(() => (props.en ? localizeDeep(rawNodes, enText) : rawNodes))
 
 // ── 边定义 ───────────────────────────────────────────────────────────────────
 const blue  = { animated: true,  style: { stroke: '#6366f1', strokeWidth: 1.5 } }

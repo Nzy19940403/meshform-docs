@@ -2,8 +2,8 @@
   <div class="grp-graph-wrap">
     <div class="graph-header">
       <span class="graph-badge">DAG</span>
-      <span class="graph-title">企业团险联动依赖图（7 层计算链）</span>
-      <span class="graph-hint">从 employeeCount 到 taxActual，引擎保证拓扑顺序一次性传播</span>
+      <span class="graph-title">{{ copy.title }}</span>
+      <span class="graph-hint">{{ copy.hint }}</span>
     </div>
     <div class="graph-body">
       <VueFlow
@@ -22,30 +22,116 @@
       </VueFlow>
     </div>
     <div class="graph-legend">
-      <span class="leg-item"><span class="leg-dot company"></span>企业信息</span>
-      <span class="leg-item"><span class="leg-dot factor"></span>费率系数</span>
-      <span class="leg-item"><span class="leg-dot config"></span>险种启用</span>
-      <span class="leg-item"><span class="leg-dot count"></span>参保人数</span>
-      <span class="leg-item"><span class="leg-dot bundle"></span>捆绑折扣</span>
-      <span class="leg-item"><span class="leg-dot premium"></span>险种保费</span>
-      <span class="leg-item"><span class="leg-dot summary"></span>费用汇总</span>
-      <span class="leg-item"><span class="leg-edge blue"></span>值传播</span>
-      <span class="leg-item"><span class="leg-edge amber"></span>显隐控制</span>
+      <span class="leg-item"><span class="leg-dot company"></span>{{ copy.legend[0] }}</span>
+      <span class="leg-item"><span class="leg-dot factor"></span>{{ copy.legend[1] }}</span>
+      <span class="leg-item"><span class="leg-dot config"></span>{{ copy.legend[2] }}</span>
+      <span class="leg-item"><span class="leg-dot count"></span>{{ copy.legend[3] }}</span>
+      <span class="leg-item"><span class="leg-dot bundle"></span>{{ copy.legend[4] }}</span>
+      <span class="leg-item"><span class="leg-dot premium"></span>{{ copy.legend[5] }}</span>
+      <span class="leg-item"><span class="leg-dot summary"></span>{{ copy.legend[6] }}</span>
+      <span class="leg-item"><span class="leg-edge blue"></span>{{ copy.legend[7] }}</span>
+      <span class="leg-item"><span class="leg-edge amber"></span>{{ copy.legend[8] }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { VueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
+
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+const copyMap = {
+  zh: {
+    title: '企业团险联动依赖图（7 层计算链）',
+    hint: '从 employeeCount 到 taxActual，引擎保证拓扑顺序一次性传播',
+    legend: ['企业信息', '费率系数', '险种启用', '参保人数', '捆绑折扣', '险种保费', '费用汇总', '值传播', '显隐控制'],
+  },
+  en: {
+    title: 'Group insurance dependency graph (7-layer calculation chain)',
+    hint: 'From employeeCount to taxActual, the engine propagates once in topological order.',
+    legend: ['Company', 'Rate factors', 'Product toggles', 'Insured count', 'Bundle discount', 'Premiums', 'Summary', 'Value propagation', 'Visibility control'],
+  },
+} as const
+const copy = computed(() => (props.en ? copyMap.en : copyMap.zh))
+
+const enText = {
+  "员工人数": "Employee count",
+  "monthlyWage": "monthlyWage",
+  "月均工资": "Average wage",
+  "行业类别": "Industry",
+  "所在地区": "Region",
+  "无赔付年数": "Claim-free years",
+  "规模系数": "Scale factor",
+  "← 员工人数": "<- employee count",
+  "行业系数": "Industry factor",
+  "← 行业类别": "<- industry",
+  "地区系数": "Region factor",
+  "← 所在地区": "<- region",
+  "赔付系数": "Claims factor",
+  "← 无赔付年数": "<- claim-free years",
+  "综合系数": "Combined factor",
+  "× 4 系数": "× 4 factors",
+  "医疗险": "Medical",
+  "寿险": "Life",
+  "意外险": "Accident",
+  "重疾险": "Critical illness",
+  "住院补贴": "Hospital cash",
+  "← 依赖医疗险": "<- requires medical",
+  "门诊补贴": "Outpatient",
+  "医疗参保人数": "Medical insured",
+  "n × 参保率": "n × enrollment rate",
+  "寿险参保人数": "Life insured",
+  "意外参保人数": "Accident insured",
+  "重疾参保人数": "Critical illness insured",
+  "住院参保人数": "Hospital cash insured",
+  "门诊参保人数": "Outpatient insured",
+  "捆绑险种数": "Bundle count",
+  "← 已启用险种": "<- enabled products",
+  "捆绑折扣": "Bundle discount",
+  "← 捆绑险种数": "<- bundle count",
+  "医疗险保费": "Medical premium",
+  "¥5/万保额/人": "¥5 / x10k / person",
+  "寿险保费": "Life premium",
+  "¥4/万保额/人": "¥4 / x10k / person",
+  "意外险保费": "Accident premium",
+  "¥3/万保额/人": "¥3 / x10k / person",
+  "重疾险保费": "CI premium",
+  "¥6/万保额/人": "¥6 / x10k / person",
+  "住院补贴保费": "Hospital cash premium",
+  "¥1.8/日额/人": "¥1.8 / daily benefit / person",
+  "门诊补贴保费": "Outpatient premium",
+  "50%/限额/人": "50% / limit / person",
+  "总保费": "Total premium",
+  "Σ 6 险种": "sum of 6 products",
+  "税前抵扣上限": "Pre-tax deduction cap",
+  "月薪×12×5%": "monthly wage × 12 × 5%",
+  "人均月保费": "Monthly premium / person",
+  "÷ 人数 ÷ 12": "÷ headcount ÷ 12",
+  "折扣节省": "Savings",
+  "折扣节省金额": "discount savings",
+  "实际税前抵扣": "Actual pre-tax deduction",
+  "min(总保费, 上限)": "min(total premium, cap)"
+} as const
+
+function localizeDeep(value, dict) {
+  if (Array.isArray(value)) return value.map(item => localizeDeep(item, dict))
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, dict)]))
+  }
+  if (typeof value === 'string') return dict[value] ?? value
+  return value
+}
 
 // ── 节点定义 ─────────────────────────────────────────────────────────────────
 // Layout (x, y) arranged left-to-right by computation layer
 // Top cluster  (y=0-320):   company inputs → 4 rate factors → combinedFactor
 // Bottom cluster (y=430-790): insurance configs → insured counts → bundle → premiums → summary
 
-const nodes = [
+const rawNodes = [
   // ── Layer 0 (top): Company inputs ───────────────────────────────────────
   { id: 'employeeCount',  type: 'field', position: { x: 0,    y: 0   }, data: { label: '员工人数',     group: 'company', sub: 'employeeCount' } },
   { id: 'monthlyWage',    type: 'field', position: { x: 0,    y: 70  }, data: { label: '月均工资',     group: 'company', sub: 'monthlyWage' } },
@@ -97,6 +183,8 @@ const nodes = [
   { id: 'saved',          type: 'field', position: { x: 1100, y: 580 }, data: { label: '折扣节省',     group: 'summary', sub: '折扣节省金额' } },
   { id: 'taxActual',      type: 'field', position: { x: 1100, y: 720 }, data: { label: '实际税前抵扣', group: 'summary', sub: 'min(总保费, 上限)' } },
 ]
+
+const nodes = computed(() => (props.en ? localizeDeep(rawNodes, enText) : rawNodes))
 
 // ── 边定义 ───────────────────────────────────────────────────────────────────
 const blue  = { animated: true,  style: { stroke: '#6366f1', strokeWidth: 1.5 } }

@@ -1,0 +1,82 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#EFF6FF"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="22" flood-color="#0F172A" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font: 700 34px Inter, Segoe UI, Arial, sans-serif; fill: #0F172A; }
+      .subtitle { font: 500 18px Inter, Segoe UI, Arial, sans-serif; fill: #475569; }
+      .cardTitle { font: 700 18px Inter, Segoe UI, Arial, sans-serif; fill: #0F172A; }
+      .cardText { font: 500 14px Inter, Segoe UI, Arial, sans-serif; fill: #475569; }
+      .fieldLabel { font: 700 14px Inter, Segoe UI, Arial, sans-serif; fill: #334155; }
+      .fieldValue { font: 600 18px Inter, Segoe UI, Arial, sans-serif; fill: #0F172A; }
+      .small { font: 600 13px Inter, Segoe UI, Arial, sans-serif; fill: #64748B; }
+      .pill { font: 700 13px Inter, Segoe UI, Arial, sans-serif; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" rx="28" fill="url(#bg)"/>
+  <text x="70" y="90" class="title">What MeshForm Vue helps you build</text>
+  <text x="70" y="124" class="subtitle">Not just dynamic forms. Forms with dependency propagation, async behavior, and state that stays explainable.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="370" y="180" width="460" height="400" rx="30" fill="white"/>
+    <rect x="70" y="200" width="240" height="150" rx="24" fill="white"/>
+    <rect x="890" y="200" width="240" height="150" rx="24" fill="white"/>
+    <rect x="70" y="430" width="240" height="150" rx="24" fill="white"/>
+    <rect x="890" y="430" width="240" height="150" rx="24" fill="white"/>
+  </g>
+
+  <text x="410" y="235" class="cardTitle" style="font-size:24px;">Example form</text>
+  <text x="410" y="262" class="small">A procurement / pricing flow with real linkage</text>
+
+  <rect x="410" y="290" width="170" height="78" rx="18" fill="#F8FAFC" stroke="#E2E8F0"/>
+  <text x="432" y="320" class="fieldLabel">Category</text>
+  <text x="432" y="350" class="fieldValue">Cloud</text>
+
+  <rect x="610" y="290" width="180" height="78" rx="18" fill="#EFF6FF" stroke="#93C5FD"/>
+  <text x="632" y="320" class="fieldLabel">Product</text>
+  <text x="632" y="350" class="fieldValue">4C8G</text>
+
+  <rect x="410" y="398" width="170" height="78" rx="18" fill="#FFF7ED" stroke="#FDBA74"/>
+  <text x="432" y="428" class="fieldLabel">Unit Price</text>
+  <text x="432" y="458" class="fieldValue">$299</text>
+
+  <rect x="610" y="398" width="180" height="78" rx="18" fill="#F0FDF4" stroke="#86EFAC"/>
+  <text x="632" y="428" class="fieldLabel">Total</text>
+  <text x="632" y="458" class="fieldValue">$3,588</text>
+
+  <rect x="470" y="510" width="260" height="34" rx="17" fill="#E2E8F0"/>
+  <text x="506" y="532" class="pill" fill="#334155">rules drive the interaction graph</text>
+
+  <path d="M310 275C332 275 344 286 370 312" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+  <path d="M830 312C856 286 868 275 890 275" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+  <path d="M310 505C334 505 344 495 370 465" stroke="#F97316" stroke-width="6" stroke-linecap="round"/>
+  <path d="M830 465C856 495 866 505 890 505" stroke="#16A34A" stroke-width="6" stroke-linecap="round"/>
+
+  <rect x="94" y="224" width="94" height="28" rx="14" fill="#DBEAFE"/>
+  <text x="116" y="243" class="pill" fill="#1D4ED8">1</text>
+  <text x="94" y="280" class="cardTitle">Dependent options</text>
+  <text x="94" y="310" class="cardText">Change one field and refresh another field's option set without hand-written watch chains.</text>
+
+  <rect x="914" y="224" width="94" height="28" rx="14" fill="#DBEAFE"/>
+  <text x="936" y="243" class="pill" fill="#1D4ED8">2</text>
+  <text x="914" y="280" class="cardTitle">Async-safe updates</text>
+  <text x="914" y="310" class="cardText">Let async option loading or price lookup settle without stale results overwriting newer state.</text>
+
+  <rect x="94" y="454" width="94" height="28" rx="14" fill="#FFEDD5"/>
+  <text x="116" y="473" class="pill" fill="#C2410C">3</text>
+  <text x="94" y="510" class="cardTitle">Derived values</text>
+  <text x="94" y="540" class="cardText">Keep totals, rates, and readonly fields in sync through explicit dependencies.</text>
+
+  <rect x="914" y="454" width="94" height="28" rx="14" fill="#DCFCE7"/>
+  <text x="936" y="473" class="pill" fill="#15803D">4</text>
+  <text x="914" y="510" class="cardTitle">Bidirectional constraints</text>
+  <text x="914" y="540" class="cardText">Model fields that influence one another and let the engine converge instead of looping forever.</text>
+
+  <text x="70" y="680" class="small">MeshForm Vue keeps JSON Forms for rendering and delegates the hard part, state orchestration, to MeshFlow.</text>
+</svg>

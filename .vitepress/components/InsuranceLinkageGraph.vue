@@ -2,8 +2,8 @@
   <div class="ins-graph-wrap">
     <div class="graph-header">
       <span class="graph-badge">DAG</span>
-      <span class="graph-title">保险表单联动依赖图（8 层计算链）</span>
-      <span class="graph-hint">从 birthYear 到 perPayment，引擎保证拓扑顺序一次性传播</span>
+      <span class="graph-title">{{ copy.title }}</span>
+      <span class="graph-hint">{{ copy.hint }}</span>
     </div>
     <div class="graph-body">
       <VueFlow
@@ -22,20 +22,94 @@
       </VueFlow>
     </div>
     <div class="graph-legend">
-      <span class="leg-item"><span class="leg-dot insured"></span>被保险人</span>
-      <span class="leg-item"><span class="leg-dot health"></span>健康告知</span>
-      <span class="leg-item"><span class="leg-dot product"></span>险种方案</span>
-      <span class="leg-item"><span class="leg-dot premium"></span>保费计算</span>
-      <span class="leg-item"><span class="leg-edge blue"></span>值传播</span>
-      <span class="leg-item"><span class="leg-edge amber"></span>显隐控制</span>
+      <span class="leg-item"><span class="leg-dot insured"></span>{{ copy.legend[0] }}</span>
+      <span class="leg-item"><span class="leg-dot health"></span>{{ copy.legend[1] }}</span>
+      <span class="leg-item"><span class="leg-dot product"></span>{{ copy.legend[2] }}</span>
+      <span class="leg-item"><span class="leg-dot premium"></span>{{ copy.legend[3] }}</span>
+      <span class="leg-item"><span class="leg-edge blue"></span>{{ copy.legend[4] }}</span>
+      <span class="leg-item"><span class="leg-edge amber"></span>{{ copy.legend[5] }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { VueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
+
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+const copyMap = {
+  zh: {
+    title: '保险表单联动依赖图（8 层计算链）',
+    hint: '从 birthYear 到 perPayment，引擎保证拓扑顺序一次性传播',
+    legend: ['被保险人', '健康告知', '险种方案', '保费计算', '值传播', '显隐控制'],
+  },
+  en: {
+    title: 'Insurance dependency graph (8-layer calculation chain)',
+    hint: 'From birthYear to perPayment, the engine propagates once in topological order.',
+    legend: ['Insured', 'Health', 'Product', 'Premium', 'Value propagation', 'Visibility control'],
+  },
+} as const
+const copy = computed(() => (props.en ? copyMap.en : copyMap.zh))
+
+const enText = {
+  "出生年份": "Birth year",
+  "性别": "Gender",
+  "职业": "Occupation",
+  "身高": "Height",
+  "体重": "Weight",
+  "吸烟": "Smoking",
+  "慢性病史": "Chronic condition",
+  "险种类型": "Product type",
+  "保额": "Coverage",
+  "缴费频率": "Payment frequency",
+  "附加意外险": "Accident rider",
+  "附加残疾险": "Disability rider",
+  "年龄": "Age",
+  "← 出生年份": "<- birth year",
+  "职业风险系数": "Occupation risk",
+  "← 职业": "<- occupation",
+  "BMI 指数": "BMI",
+  "← 身高 + 体重": "<- height + weight",
+  "BMI 状态": "BMI status",
+  "← BMI 指数": "<- BMI",
+  "需体检": "Medical exam flag",
+  "← 保额": "<- coverage",
+  "基础费率": "Base rate",
+  "← 险种 + 年龄 + 性别": "<- product + age + gender",
+  "基础保费": "Base premium",
+  "← 基础费率 × 保额 × 10": "<- base rate × coverage × 10",
+  "吸烟附加费": "Smoking surcharge",
+  "× 30%": "× 30%",
+  "职业附加费": "Occupation surcharge",
+  "× 风险系数%": "× risk factor%",
+  "BMI 附加费": "BMI surcharge",
+  "× 10/20%": "× 10/20%",
+  "疾病附加费": "Condition surcharge",
+  "× 25%": "× 25%",
+  "意外险保费": "Accident rider premium",
+  "固定费率": "fixed rate",
+  "残疾险保费": "Disability rider premium",
+  "调整后年保费": "Adjusted annual premium",
+  "6 项加总": "sum of 6 terms",
+  "频率系数": "Frequency factor",
+  "年缴保费": "Annual premium",
+  "× 频率系数": "× frequency factor",
+  "每期保费": "Per-payment premium",
+  "÷ 期数": "÷ installments"
+} as const
+
+function localizeDeep(value, dict) {
+  if (Array.isArray(value)) return value.map(item => localizeDeep(item, dict))
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, dict)]))
+  }
+  if (typeof value === 'string') return dict[value] ?? value
+  return value
+}
 
 // ── 节点定义 ─────────────────────────────────────────────────────────────────
 // Layout (x, y) arranged left-to-right by computation layer
@@ -48,7 +122,7 @@ import '@vue-flow/core/dist/theme-default.css'
 // Layer 6: annualPremium
 // Layer 7: perPayment
 
-const nodes = [
+const rawNodes = [
   // ── Layer 0 – inputs ────────────────────────────────────────────────────
   { id: 'birthYear',      type: 'field', position: { x: 0,   y: 0   }, data: { label: '出生年份',   group: 'insured', sub: 'birthYear' } },
   { id: 'gender',         type: 'field', position: { x: 0,   y: 60  }, data: { label: '性别',       group: 'insured', sub: 'gender' } },
@@ -94,6 +168,8 @@ const nodes = [
   // ── Layer 7 – perPayment ─────────────────────────────────────────────────
   { id: 'perPayment',     type: 'field', position: { x: 1280, y: 520 }, data: { label: '每期保费',  group: 'premium', sub: '÷ 期数' } },
 ]
+
+const nodes = computed(() => (props.en ? localizeDeep(rawNodes, enText) : rawNodes))
 
 // ── 边定义 ───────────────────────────────────────────────────────────────────
 const blue  = { animated: true,  style: { stroke: '#6366f1', strokeWidth: 1.5 } }

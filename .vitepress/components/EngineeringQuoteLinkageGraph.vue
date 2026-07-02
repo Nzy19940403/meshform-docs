@@ -2,9 +2,9 @@
   <div class="eq-graph-wrap">
     <div class="graph-header">
       <span class="graph-badge-dag">DAG</span>
-      <span class="graph-badge-ent">⟳ 纠缠</span>
-      <span class="graph-title">工程报价单联动依赖图</span>
-      <span class="graph-hint">53 节点 · 7 层 DAG · 2 对有环纠缠</span>
+      <span class="graph-badge-ent">{{ copy.ent }}</span>
+      <span class="graph-title">{{ copy.title }}</span>
+      <span class="graph-hint">{{ copy.hint }}</span>
     </div>
     <div class="graph-body">
       <VueFlow
@@ -30,29 +30,134 @@
       </VueFlow>
     </div>
     <div class="graph-legend">
-      <span class="leg-item"><span class="leg-dot project"></span>项目基础</span>
-      <span class="leg-item"><span class="leg-dot wbs"></span>WBS 工作分解</span>
-      <span class="leg-item"><span class="leg-dot costs"></span>成本汇总</span>
-      <span class="leg-item"><span class="leg-dot pricing"></span>报价计算</span>
-      <span class="leg-item"><span class="leg-dot resource"></span>资源规划</span>
-      <span class="leg-item"><span class="leg-dot payment"></span>付款方案</span>
-      <span class="leg-item"><span class="leg-dot entangle-dot"></span>⟳ 双向纠缠</span>
-      <span class="leg-item"><span class="leg-edge dag-edge"></span>DAG 依赖</span>
-      <span class="leg-item"><span class="leg-edge ent-edge"></span>纠缠传播</span>
+      <span class="leg-item"><span class="leg-dot project"></span>{{ copy.legend[0] }}</span>
+      <span class="leg-item"><span class="leg-dot wbs"></span>{{ copy.legend[1] }}</span>
+      <span class="leg-item"><span class="leg-dot costs"></span>{{ copy.legend[2] }}</span>
+      <span class="leg-item"><span class="leg-dot pricing"></span>{{ copy.legend[3] }}</span>
+      <span class="leg-item"><span class="leg-dot resource"></span>{{ copy.legend[4] }}</span>
+      <span class="leg-item"><span class="leg-dot payment"></span>{{ copy.legend[5] }}</span>
+      <span class="leg-item"><span class="leg-dot entangle-dot"></span>{{ copy.legend[6] }}</span>
+      <span class="leg-item"><span class="leg-edge dag-edge"></span>{{ copy.legend[7] }}</span>
+      <span class="leg-item"><span class="leg-edge ent-edge"></span>{{ copy.legend[8] }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { VueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
+
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+const copyMap = {
+  zh: {
+    title: '工程报价单联动依赖图',
+    hint: '53 节点 · 7 层 DAG · 2 对有环纠缠',
+    ent: '纠缠',
+    legend: ['项目基础', 'WBS 工作分解', '成本汇总', '报价计算', '资源规划', '付款方案', '双向纠缠', 'DAG 依赖', '纠缠传播'],
+  },
+  en: {
+    title: 'Engineering quote dependency graph',
+    hint: '53 nodes · 7 DAG layers · 2 cyclic entangled pairs',
+    ent: 'Entangle',
+    legend: ['Project', 'WBS', 'Costs', 'Pricing', 'Resources', 'Payment', 'Bidirectional entangle', 'DAG dependency', 'Entangle propagation'],
+  },
+} as const
+const copy = computed(() => (props.en ? copyMap.en : copyMap.zh))
+
+const enText = {
+  "项目类型": "Project type",
+  "软件/集成/咨询/运维": "software / integration / consulting / ops",
+  "客户行业": "Client industry",
+  "金融/制造/政府/零售": "finance / manufacturing / government / retail",
+  "PM 日费率": "PM day rate",
+  "← 项目类型": "<- project type",
+  "开发 日费率": "Developer day rate",
+  "QA 日费率": "QA day rate",
+  "管理费率": "Management fee",
+  "风险储备率": "Risk buffer",
+  "增值税率": "VAT rate",
+  "← 客户行业": "<- client industry",
+  "需求分析·PM": "Discovery · PM",
+  "用户录入": "user input",
+  "需求分析·开发": "Discovery · Dev",
+  "需求分析·QA": "Discovery · QA",
+  "系统设计·PM": "Design · PM",
+  "系统设计·开发": "Design · Dev",
+  "系统设计·QA": "Design · QA",
+  "开发实施·PM": "Implementation · PM",
+  "开发实施·开发": "Implementation · Dev",
+  "开发实施·QA": "Implementation · QA",
+  "需求分析人天": "Discovery person-days",
+  "pm1+dev1+qa1": "pm1 + dev1 + qa1",
+  "需求分析成本": "Discovery cost",
+  "人天×费率": "person-days × rates",
+  "系统设计人天": "Design person-days",
+  "pm2+dev2+qa2": "pm2 + dev2 + qa2",
+  "系统设计成本": "Design cost",
+  "开发实施人天": "Implementation person-days",
+  "pm3+dev3+qa3": "pm3 + dev3 + qa3",
+  "开发实施成本": "Implementation cost",
+  "合计投入人天": "Total person-days",
+  "Σ三阶段人天": "sum of 3 phases",
+  "总人力成本": "Total labor cost",
+  "Σ三阶段成本": "sum of 3 phase costs",
+  "硬件采购成本": "Procurement cost",
+  "差旅及其他": "Travel and other",
+  "管理费": "Management fee",
+  "人力成本 × 管理费率": "labor cost × mgmt rate",
+  "风险储备金": "Risk buffer",
+  "直接成本 × 风险率": "direct cost × risk rate",
+  "项目总成本": "Total project cost",
+  "Σ劳动+管理+采购+差旅+风险": "sum of labor + mgmt + procurement + travel + risk",
+  "目标利润率 ⟳": "Target margin ⟳",
+  "用户录入/纠缠更新": "user input / entangle update",
+  "最终报价 ⟳": "Final quote ⟳",
+  "纠缠 ①": "Entangle 1",
+  "margin × cost = quote": "margin × cost = quote",
+  "建议报价": "Suggested quote",
+  "cost × (1 + margin%)": "cost × (1 + margin%)",
+  "利润额": "Margin amount",
+  "quotePrice - totalCost": "quote - total cost",
+  "增值税额": "VAT amount",
+  "quotePrice × 税率": "quote × tax rate",
+  "含税总价": "Total incl. VAT",
+  "quotePrice + taxAmount": "quote + VAT",
+  "签约首付": "Deposit on signing",
+  "含税总价 × 首付比例": "incl. VAT total × deposit rate",
+  "里程碑中期款": "Milestone payment",
+  "含税总价 × 40%": "incl. VAT total × 40%",
+  "验收尾款": "Final payment",
+  "总价 - 首付 - 中期": "total - deposit - milestone",
+  "团队并行效率": "Team parallelism",
+  "0.7 / 0.8 / 0.9": "0.7 / 0.8 / 0.9",
+  "项目工期 ⟳": "Duration ⟳",
+  "团队规模 ⟳": "Team size ⟳",
+  "纠缠 ②": "Entangle 2",
+  "工期 × 人数 × 效率 = 总人天": "duration × people × efficiency = total person-days",
+  "日均合同额": "Daily contract value",
+  "quotePrice ÷ 工期": "quote ÷ duration",
+  "人天单价": "Revenue per person-day",
+  "quotePrice ÷ 总人天": "quote ÷ total person-days"
+} as const
+
+function localizeDeep(value, dict) {
+  if (Array.isArray(value)) return value.map(item => localizeDeep(item, dict))
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, dict)]))
+  }
+  if (typeof value === 'string') return dict[value] ?? value
+  return value
+}
 
 // ── 布局参数 ──────────────────────────────────────────────────────────────────
 // 主链（上半部分 y: 0~540）：项目类型 → 费率 → WBS人天/成本 → 成本汇总 → 报价 → 税 → 付款
 // 资源规划（下半部分 y: 620~780）：总人天 → 纠缠(工期↔团队) → 人天单价/日均收入
 
-const nodes = [
+const rawNodes = [
   // ── Layer 0: 项目输入 (x=0) ──────────────────────────────────────────────
   { id: 'projectType',     type: 'field', position: { x: 0,    y: 20  }, data: { label: '项目类型',     group: 'project', sub: '软件/集成/咨询/运维' } },
   { id: 'clientIndustry',  type: 'field', position: { x: 0,    y: 90  }, data: { label: '客户行业',     group: 'project', sub: '金融/制造/政府/零售' } },
@@ -124,6 +229,8 @@ const nodes = [
   { id: 'dailyRevenue',    type: 'field', position: { x: 1480, y: 460 }, data: { label: '日均合同额',   group: 'resource', sub: 'quotePrice ÷ 工期' } },
   { id: 'personDayRate',   type: 'field', position: { x: 1480, y: 570 }, data: { label: '人天单价',     group: 'resource', sub: 'quotePrice ÷ 总人天' } },
 ]
+
+const nodes = computed(() => (props.en ? localizeDeep(rawNodes, enText) : rawNodes))
 
 const edges = [
   // ── 项目类型 → 费率 ───────────────────────────────────────────────────────

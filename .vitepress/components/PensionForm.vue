@@ -1,24 +1,24 @@
 <template>
   <div class="pf-wrap">
     <div class="pf-header">
-      <span class="pf-badge">⧩ MeshForm</span>
-      <span class="pf-title">养老年金规划 — 30 条联动规则 · 双向计算</span>
-      <span class="pf-desc">设定缴费 → 看能领多少 · 设定目标 → 看还差多少</span>
+      <span class="pf-badge">MeshForm</span>
+      <span class="pf-title">{{ copy.title }}</span>
+      <span class="pf-desc">{{ copy.desc }}</span>
     </div>
 
     <v-app theme="dark" class="pf-vapp">
       <div class="pf-body">
         <MeshForm
-          :schema="schema"
+          :schema="formSchema"
           :rules="rules"
-          :uischema="uischema"
+          :uischema="formUiSchema"
           :renderers="customRenderers"
           @change="onFormChange"
           @submit="onSubmit"
         >
           <template #actions="{ submit }">
             <div class="pf-actions">
-              <v-btn color="primary" variant="tonal" @click="submit">保存规划方案</v-btn>
+              <v-btn color="primary" variant="tonal" @click="submit">{{ copy.submit }}</v-btn>
             </div>
           </template>
         </MeshForm>
@@ -26,7 +26,7 @@
 
       <div v-if="submitted" class="pf-result">
         <div class="pf-result-hd">
-          <span class="pf-dot pf-dot--green" />✓ 规划方案已保存
+          <span class="pf-dot pf-dot--green" />{{ copy.result }}
         </div>
         <pre class="pf-result-pre">{{ submittedStr }}</pre>
       </div>
@@ -51,6 +51,107 @@ const numberInputTester = rankWith(10, and(
   )
 ))
 const customRenderers = [{ tester: numberInputTester, renderer: markRaw(NumberInputRenderer) }]
+
+const props = withDefaults(defineProps<{ en?: boolean }>(), {
+  en: false,
+})
+const copyMap = {
+  zh: {
+    title: '养老年金规划 · 30 条联动规则 · 双向计算',
+    desc: '设定缴费看能领多少，设定目标看还差多少。',
+    submit: '保存规划方案',
+    result: '规划方案已保存',
+  },
+  en: {
+    title: 'Pension Planning · 30 rules · Two-way calculation',
+    desc: 'Set contributions to see future income, or set a target to see the remaining gap.',
+    submit: 'Save plan',
+    result: 'Plan saved',
+  },
+} as const
+const copy = computed(() => (props.en ? copyMap.en : copyMap.zh))
+
+const enText = {
+  "养老年金规划": "Pension planning",
+  "个人信息": "Personal details",
+  "当前年龄": "Current age",
+  "计划退休年龄": "Retirement age",
+  "积累年限（年）": "Accumulation years",
+  "计划领取年限": "Withdrawal years",
+  "当前月收入 (元)": "Current monthly income (¥)",
+  "年收入增长率": "Income growth rate",
+  "1%（保守）": "1% (conservative)",
+  "2%": "2%",
+  "3%（基准）": "3% (baseline)",
+  "4%": "4%",
+  "5%（乐观）": "5% (optimistic)",
+  "投资策略": "Investment strategy",
+  "投资风格": "Risk profile",
+  "保守型（债券为主，预期 3.5%）": "Conservative (bonds, expected 3.5%)",
+  "平衡型（股债均衡，预期 5.5%）": "Balanced (stock/bond mix, expected 5.5%)",
+  "积极型（权益为主，预期 8.0%）": "Aggressive (equity-heavy, expected 8.0%)",
+  "年化收益率 (%)": "Annual return (%)",
+  "通胀假设 (%)": "Inflation assumption (%)",
+  "2%（低通胀）": "2% (low inflation)",
+  "2.5%（基准）": "2.5% (baseline)",
+  "3%（高通胀）": "3% (high inflation)",
+  "缴费方案": "Contribution plan",
+  "个人月缴额 (元)": "Personal monthly contribution (¥)",
+  "企业配比 (%)": "Employer match (%)",
+  "月缴合计 (元)": "Total monthly contribution (¥)",
+  "年缴合计 (元)": "Total annual contribution (¥)",
+  "税优上限 (元/年)": "Tax-advantaged cap (¥/year)",
+  "正向推算 · 我能领多少": "Forward projection · What does this buy?",
+  "退休时积累金额 (元)": "Accumulated value at retirement (¥)",
+  "通胀折现购买力 (元)": "Inflation-adjusted value (¥)",
+  "退休时月工资 (元)": "Monthly salary at retirement (¥)",
+  "预估月退休金 (元)": "Estimated monthly pension (¥)",
+  "养老替代率 (%)": "Replacement rate (%)",
+  "替代率评级": "Replacement status",
+  "反向推算 · 达到目标还差多少": "Reverse projection · What is still missing?",
+  "目标替代率 (%)": "Target replacement rate (%)",
+  "对应目标月退休金 (元)": "Target monthly pension (¥)",
+  "需积累总金额 (元)": "Required accumulated value (¥)",
+  "建议月缴合计 (元)": "Suggested monthly total (¥)",
+  "个人月缴缺口 (元)": "Personal monthly gap (¥)",
+  "缺口说明": "Gap note",
+  "规划提示": "Planning alerts",
+  "⚠ 替代率不足": "⚠ Replacement below target",
+  "当前缴费方案下，养老替代率低于目标，建议增加缴费或调整退休年龄。": "Under the current contribution plan, the replacement rate is below target. Consider increasing contributions or delaying retirement.",
+  "⚠ 超税优上限": "⚠ Above tax-advantaged cap",
+  "个人年缴额已超过税收优惠上限（月薪×12×6%），超出部分无法享受税前扣除。": "Personal annual contributions exceed the tax-advantaged cap (monthly salary × 12 × 6%), so the excess is not deductible before tax.",
+  "⚠ 积累年限过短": "⚠ Accumulation period too short",
+  "积累年限不足 10 年，复利效应有限，建议尽早启动养老规划。": "The accumulation period is shorter than 10 years, which limits compounding. Start earlier if possible.",
+  "正向推算 · 按当前方案预估退休金": "Forward projection · Retirement income under the current plan",
+  "反向推算 · 设定目标看缺口": "Reverse projection · Set a target and inspect the gap"
+} as const
+
+function localizeDeep(value, dict) {
+  if (Array.isArray(value)) return value.map(item => localizeDeep(item, dict))
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, dict)]))
+  }
+  if (typeof value === 'string') return dict[value] ?? value
+  return value
+}
+
+function replacementStatusText(rate: number) {
+  if (rate >= 80) return props.en ? '🟢 Excellent (' + rate + '%)' : '🟢 优秀（' + rate + '%）'
+  if (rate >= 60) return props.en ? '🟡 Solid (' + rate + '%)' : '🟡 良好（' + rate + '%）'
+  if (rate >= 40) return props.en ? '🟠 Moderate (' + rate + '%)' : '🟠 一般（' + rate + '%）'
+  return props.en ? '🔴 Low (' + rate + '%)' : '🔴 不足（' + rate + '%）'
+}
+
+function gapNoteText(gap: number) {
+  if (gap <= 0) {
+    return props.en
+      ? '✅ The current plan can hit the target, with ¥' + Math.abs(gap).toLocaleString() + ' of monthly headroom left.'
+      : '✅ 当前方案可达成目标，月缴还有余裕 ¥' + Math.abs(gap).toLocaleString()
+  }
+  return props.en
+    ? 'You still need to add ¥' + gap.toLocaleString() + ' in personal monthly contributions, or increase the employer match.'
+    : '每月还需追加个人缴费 ¥' + gap.toLocaleString() + '（或增加企业配比）'
+}
 
 // ── 投资风格 → 预期年化收益率 ────────────────────────────────────────────────
 const STYLE_RETURN: Record<string, number> = {
@@ -102,10 +203,7 @@ const INIT_REAL_POWER      = Math.round(INIT_ACCUM_FV / Math.pow(1 + 2.5 / 100, 
 const INIT_MONTHLY_PENSION = Math.round(annuityPmt(INIT_ANNUAL_RETURN * 0.5 / 100 / 12, 20 * 12, INIT_ACCUM_FV))
 const INIT_REPLACE_RATE    = INIT_RET_WAGE > 0
   ? Math.round(INIT_MONTHLY_PENSION / INIT_RET_WAGE * 100 * 10) / 10 : 0
-const INIT_REPLACE_STATUS  = INIT_REPLACE_RATE >= 80 ? `🟢 优秀（${INIT_REPLACE_RATE}%）`
-  : INIT_REPLACE_RATE >= 60 ? `🟡 良好（${INIT_REPLACE_RATE}%）`
-  : INIT_REPLACE_RATE >= 40 ? `🟠 一般（${INIT_REPLACE_RATE}%）`
-  : `🔴 不足（${INIT_REPLACE_RATE}%）`
+const INIT_REPLACE_STATUS  = replacementStatusText(INIT_REPLACE_RATE)
 
 const INIT_TARGET_PENSION  = Math.round(INIT_RET_WAGE * 70 / 100)
 const INIT_REQ_ACCUM       = Math.round(annuityPv(INIT_ANNUAL_RETURN * 0.5 / 100 / 12, 20 * 12, INIT_TARGET_PENSION))
@@ -115,9 +213,7 @@ const INIT_REQ_MONTHLY     = _rr <= 0 || _rp <= 0
   ? Math.round(INIT_REQ_ACCUM / Math.max(1, _rp))
   : Math.round(INIT_REQ_ACCUM * _rr / (Math.pow(1 + _rr, _rp) - 1))
 const INIT_PERS_GAP        = Math.round(INIT_REQ_MONTHLY / (1 + 50 / 100) - 2000)
-const INIT_GAP_NOTE        = INIT_PERS_GAP <= 0
-  ? `✅ 当前方案可达成目标，月缴还有余裕 ¥${Math.abs(INIT_PERS_GAP).toLocaleString()}`
-  : `每月还需追加个人缴费 ¥${INIT_PERS_GAP.toLocaleString()}（或增加企业配比）`
+const INIT_GAP_NOTE        = gapNoteText(INIT_PERS_GAP)
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 const schema: MeshFormSchema = {
@@ -334,12 +430,7 @@ const rules: Record<string, FromDescriptor> = {
   // 替代率评级
   'forward.replacementStatus.value': from(
     'forward.replacementRate',
-    (rate: number) => {
-      if (rate >= 80) return `🟢 优秀（${rate}%）`
-      if (rate >= 60) return `🟡 良好（${rate}%）`
-      if (rate >= 40) return `🟠 一般（${rate}%）`
-      return `🔴 不足（${rate}%）`
-    }
+    (rate: number) => replacementStatusText(rate)
   ),
 
   // ── ⑤ 反向推算（6 条）────────────────────────────────────────────────────
@@ -380,10 +471,7 @@ const rules: Record<string, FromDescriptor> = {
   // 缺口说明
   'reverse.gapNote.value': from(
     ['reverse.personalGap', 'reverse.requiredMonthly'],
-    (gap: number, req: number) => {
-      if (gap <= 0) return `✅ 当前方案可达成目标，月缴还有余裕 ¥${Math.abs(gap).toLocaleString()}`
-      return `每月还需追加个人缴费 ¥${gap.toLocaleString()}（或增加企业配比）`
-    }
+    (gap: number, _req: number) => gapNoteText(gap)
   ),
 
   // ── ⑥ 警告显隐（5 条）────────────────────────────────────────────────────
@@ -493,6 +581,9 @@ const uischema = {
     ),
   ],
 }
+
+const formSchema = computed(() => (props.en ? localizeDeep(schema, enText) : schema))
+const formUiSchema = computed(() => (props.en ? localizeDeep(uischema, enText) : uischema))
 
 // ── 状态 ──────────────────────────────────────────────────────────────────────
 const submitted     = ref(false)

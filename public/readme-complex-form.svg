@@ -1,0 +1,103 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#EFF6FF"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#0EA5E9"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#F97316"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="22" flood-color="#0F172A" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font: 700 34px Inter, Segoe UI, Arial, sans-serif; fill: #0F172A; }
+      .subtitle { font: 500 18px Inter, Segoe UI, Arial, sans-serif; fill: #475569; }
+      .label { font: 700 14px Inter, Segoe UI, Arial, sans-serif; fill: #334155; }
+      .value { font: 600 17px Inter, Segoe UI, Arial, sans-serif; fill: #0F172A; }
+      .small { font: 600 13px Inter, Segoe UI, Arial, sans-serif; fill: #64748B; }
+      .badge { font: 700 13px Inter, Segoe UI, Arial, sans-serif; }
+      .calloutTitle { font: 700 16px Inter, Segoe UI, Arial, sans-serif; fill: #0F172A; }
+      .calloutText { font: 500 14px Inter, Segoe UI, Arial, sans-serif; fill: #475569; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" rx="28" fill="url(#bg)"/>
+  <circle cx="1060" cy="116" r="70" fill="#DBEAFE"/>
+  <circle cx="160" cy="648" r="96" fill="#FDE68A" fill-opacity="0.28"/>
+
+  <text x="72" y="92" class="title">A complex form should still feel understandable</text>
+  <text x="72" y="126" class="subtitle">A realistic procurement flow with dependent options, derived pricing, async refresh, and stable totals.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="60" y="170" width="760" height="520" rx="30" fill="white"/>
+  </g>
+
+  <text x="100" y="220" class="title" style="font-size:28px">Cloud Procurement Form</text>
+  <text x="100" y="250" class="small">A single selection updates downstream options, pricing, and billing state.</text>
+
+  <rect x="100" y="292" width="300" height="86" rx="18" fill="#F8FAFC" stroke="#E2E8F0"/>
+  <text x="124" y="322" class="label">Category</text>
+  <text x="124" y="356" class="value">Cloud Services</text>
+  <text x="342" y="356" class="small">select</text>
+
+  <rect x="430" y="292" width="350" height="86" rx="18" fill="#EFF6FF" stroke="#93C5FD"/>
+  <text x="454" y="322" class="label">Product</text>
+  <text x="454" y="356" class="value">Compute 4C8G</text>
+  <text x="690" y="356" class="small">options refreshed</text>
+
+  <rect x="100" y="408" width="190" height="86" rx="18" fill="#F8FAFC" stroke="#E2E8F0"/>
+  <text x="124" y="438" class="label">Quantity</text>
+  <text x="124" y="472" class="value">12</text>
+
+  <rect x="320" y="408" width="220" height="86" rx="18" fill="#FFF7ED" stroke="#FDBA74"/>
+  <text x="344" y="438" class="label">Unit Price</text>
+  <text x="344" y="472" class="value">$299 / month</text>
+  <text x="462" y="472" class="small">readonly</text>
+
+  <rect x="570" y="408" width="210" height="86" rx="18" fill="#F0FDF4" stroke="#86EFAC"/>
+  <text x="594" y="438" class="label">Billing Total</text>
+  <text x="594" y="472" class="value">$3,588</text>
+
+  <rect x="100" y="524" width="680" height="126" rx="22" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <text x="124" y="560" class="label">Rule snapshot</text>
+  <rect x="124" y="582" width="190" height="34" rx="17" fill="#DBEAFE"/>
+  <text x="146" y="604" class="badge" fill="#1D4ED8">category -> product.options</text>
+  <rect x="330" y="582" width="164" height="34" rx="17" fill="#FFEDD5"/>
+  <text x="355" y="604" class="badge" fill="#C2410C">product -> unitPrice</text>
+  <rect x="510" y="582" width="230" height="34" rx="17" fill="#DCFCE7"/>
+  <text x="534" y="604" class="badge" fill="#15803D">quantity + unitPrice -> total</text>
+
+  <path d="M400 335C412 335 418 335 430 335" stroke="url(#blue)" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="415" cy="335" r="9" fill="#2563EB"/>
+
+  <path d="M455 378C455 392 445 396 430 408" stroke="url(#orange)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M530 451C546 451 554 451 570 451" stroke="url(#orange)" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="550" cy="451" r="9" fill="#F97316"/>
+
+  <g filter="url(#shadow)">
+    <rect x="860" y="220" width="280" height="126" rx="24" fill="white"/>
+    <rect x="860" y="376" width="280" height="126" rx="24" fill="white"/>
+    <rect x="860" y="532" width="280" height="126" rx="24" fill="white"/>
+  </g>
+
+  <rect x="886" y="244" width="120" height="28" rx="14" fill="#E0F2FE"/>
+  <text x="912" y="263" class="badge" fill="#0369A1">Problem</text>
+  <text x="886" y="296" class="calloutTitle">Without orchestration</text>
+  <text x="886" y="322" class="calloutText">Complex linkage spreads across watch chains, temporary state, and timing-sensitive UI code.</text>
+
+  <rect x="886" y="400" width="118" height="28" rx="14" fill="#FFEDD5"/>
+  <text x="913" y="419" class="badge" fill="#C2410C">Engine</text>
+  <text x="886" y="452" class="calloutTitle">With MeshForm Vue</text>
+  <text x="886" y="478" class="calloutText">Dependencies are declared once, then scheduled, propagated, and stabilized by MeshFlow.</text>
+
+  <rect x="886" y="556" width="132" height="28" rx="14" fill="#DCFCE7"/>
+  <text x="912" y="575" class="badge" fill="#15803D">Outcome</text>
+  <text x="886" y="608" class="calloutTitle">What you get back</text>
+  <text x="886" y="634" class="calloutText">Readable rules, safer async behavior, and form state that stays explainable as it grows.</text>
+</svg>
